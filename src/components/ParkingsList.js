@@ -72,9 +72,8 @@ class ParkingList extends Component {
           			<ParkingsMap 
                         markers = {this.props.parkings}
                         isMarkerShown
-                        googleMapURL="https://maps.googleapis.com/maps/api/js?
-                            key=AIzaSyAuqEdlOBNzTgc9QeILQCefKqTljgvQnbw
-                            &v=3.exp&libraries=geometry,drawing,places"
+                        googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxP2D4qnJZnsfwCFu9vjhw9vf6qWBRc5k&callback=initMap"
+    async defer
                         loadingElement={<div style={{ height: `100%` }} />}
                         containerElement={<div style={{ height: `550px` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
