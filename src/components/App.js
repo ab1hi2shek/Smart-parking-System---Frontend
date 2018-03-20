@@ -70,7 +70,7 @@ class App extends Component {
 				<br />
 
 				{this.props.login && <ParkingsList/>}
-				{!this.props.login && this.state.signup && <ParkingsList/>}
+				{!this.props.login && this.state.signup && <SignupPage/>}
 				{!this.props.login && !this.state.signup && <LoginPage/>}
 
       		</div>
