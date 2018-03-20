@@ -53,7 +53,7 @@ export function handleSignUp(params) {
     }
 }
 
-export function handleFetchParkings(params) {
+export function fetchParkings(params) {
     
     return function(dispatch){
         axios.get(URL + 'parkings', {
@@ -72,12 +72,15 @@ export function handleFetchParkings(params) {
     }
 }
 
-export function handleShortestDistance(params) {
+export function fetchShortestParking(params) {
     
     return function(dispatch){
-        axios.get(URL + 'shortest-dist', {
-            lattitude: params.lattitude,
-            longitude: params.longitude
+
+        axios.get(URL + 'shortest-dist?lattitude='
+            + params.location.lattitude + '&longitude=' + params.location.longitude, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then((response) => dispatch({
             type: ActionTypes.SHORTEST_DIST_PARKING_SUCCESS,
@@ -90,12 +93,15 @@ export function handleShortestDistance(params) {
     }
 }
 
-export function handleOurAlgo(params) {
+export function fetchOptimalParking(params) {
     
     return function(dispatch){
-        axios.get(URL + 'our-algo', {
-            lattitude: params.lattitude,
-            longitude: params.longitude
+        
+        axios.get(URL + 'our-algo?lattitude='
+            + params.location.lattitude + '&longitude=' + params.location.longitude, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then((response) => dispatch({
             type: ActionTypes.OUR_ALGO_PARKING_SUCCESS,
@@ -114,3 +120,12 @@ export function handleLogout(params){
         payload: params
     }
 }
+
+export function showCurrentParkingFromMap(params){
+    return {
+        type: ActionTypes.SHOW_CURRENT_PARKING_FROM_MAP,
+        payload: params
+    }
+}
+
+

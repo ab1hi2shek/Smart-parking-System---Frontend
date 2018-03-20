@@ -88,7 +88,7 @@ const parkings = (state = {}, action) => {
             email: state.email,
             token: state.token,
             parkings: state.parkings,
-            our_algo_parking: action.payload.minimumCostParking,
+            our_algo_parking: action.payload.minCostParking,
             our_algo_cost: action.payload.minimumCost
 
         }
@@ -108,6 +108,15 @@ const parkings = (state = {}, action) => {
         return {
             message: "log out successful",
             status: 1
+        }
+
+    case ActionTypes.SHOW_CURRENT_PARKING_FROM_MAP:
+        return {
+            ...state,
+            parkingToShowFromMap: {
+                lattitude: action.payload.lattitude,
+                longitude: action.payload.longitude
+            }
         }
 
     default:
