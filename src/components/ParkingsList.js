@@ -9,7 +9,9 @@ class ParkingList extends Component {
     state = {
         name: null,
         freeParkingSpace: null,
-        totalParkingSpace: null 
+        totalParkingSpace: null,
+        shortestAlgoButtonClick: false,
+        optimalAlgoButtonClick: false 
     }
 
 	componentDidMount(){
@@ -17,6 +19,10 @@ class ParkingList extends Component {
 	}
 
     handleShortestParking = () => {
+        this.setState({
+            shortestAlgoButtonClick: true,
+            optimalAlgoButtonClick: false
+        })
         this.props.fetchShortestParking({
             location: Constants.MY_LOCATION,
             token: this.props.token,
@@ -24,6 +30,10 @@ class ParkingList extends Component {
     }
 
     handleOptimalAlgorithm = () => {
+        this.setState({
+            optimalAlgoButtonClick: true,
+            shortestAlgoButtonClick: false
+        })
         this.props.fetchOptimalParking({
             location: Constants.MY_LOCATION,
             token: this.props.token,
@@ -74,12 +84,13 @@ class ParkingList extends Component {
 
                 </div>
 
-                <div className="col-md-6">
+                <div className="col-md-5">
 
                     <div className="row">
                         <button 
                           className="btn btn-success mr-sm-4"
                           onClick = { this.handleShortestParking }
+                          disabled = { this.state.shortestAlgoButtonClick }
                         > 
                           Shortest Parking 
                         </button>
@@ -87,26 +98,66 @@ class ParkingList extends Component {
                         <button 
                           className="btn btn-success mr-sm-4"
                           onClick = { this.handleOptimalAlgorithm }
+                          disabled = { this.state.optimalAlgoButtonClick }
                         > 
                           Optimal Parking 
                         </button>
+                        <br/>
+                        <hr />
                     </div>
 
                     <div className="row">
-                        { this.props.shortestDistParking && 
-                            this.props.shortestDistParking.name }
-                        { this.props.shortestDist }
-                        { this.props.optimalAlgoParking && 
-                            this.props.optimalAlgoParking.name }
-                        { this.props.optimalAlgoCost }
+                        { this.props.shortestDistParking &&
+                            <div>
+                                <br/>
+                                <br/>
+                                <div class="alert alert-info" role="alert">
+                                    The shortest distance parking from your location is 
+                                    &nbsp;<strong>{this.props.shortestDistParking.name}
+                                    </strong> with distance of 
+                                    &nbsp;<strong>{ this.props.shortestDist.toFixed(3) }
+                                    Km</strong>.
+                                </div>
+                            </div>
+                        }
+
+                        { this.props.optimalAlgoParking &&
+                            <div>
+                                <br/>
+                                <br/>
+                                <div class="alert alert-info" role="alert">
+                                    The optimal parking from your location based on distance
+                                    as well as number of free parking slots is
+                                    &nbsp;<strong>{this.props.optimalAlgoParking.name}
+                                    </strong> with the cost of 
+                                    &nbsp;<strong>{ this.props.optimalAlgoCost.toFixed(4)}
+                                    </strong>.
+                                </div>
+                            </div>
+                        }
                     </div>
 
-                    <div className="row">
-                        {this.state.name}
-                        {this.state.freeParkingSpace}
-                        {this.state.totalParkingSpace}
-                    </div>
-
+                    {this.state.name &&
+                        <div>
+                            <br/>
+                            <br/>
+                            <div className="row">
+                                <div class="alert alert-success" role="alert">
+                                    <h4 class="alert-heading">{this.state.name}</h4>
+                                    <hr/>
+                                    <p class="mb-0">
+                                        <strong>Free Paking Space</strong>&nbsp;-&nbsp; 
+                                        {this.state.freeParkingSpace}
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Total Parking Space</strong>&nbsp;-&nbsp; 
+                                        {this.state.totalParkingSpace}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
                 </div>
 
     		</div>

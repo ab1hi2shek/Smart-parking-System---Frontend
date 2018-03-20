@@ -34,7 +34,7 @@ class App extends Component {
 		  			{this.props.login ?
 
 		  				<button 
-				  			className="btn btn-primary mr-sm-2"
+				  			className="btn btn-info mr-sm-2"
 				  			onClick = {this.handlelogout}
 				  		> 
 			  				logout 
@@ -45,7 +45,7 @@ class App extends Component {
 			  			<div align="right">
 				  			
 				  			<button 
-				  				className="btn btn-primary mr-sm-2"
+				  				className="btn btn-info mr-sm-2"
 				  				disabled = {!this.state.signup}
 				  				onClick = {this.handlelogin}
 				  			> 
@@ -53,7 +53,7 @@ class App extends Component {
 			  				</button>
 			  			
 			  				<button 
-			  					className="btn btn-primary mr-sm-2"
+			  					className="btn btn-info mr-sm-2"
 			  					disabled = {this.state.signup}
 			  					onClick = {this.handlelogin}
 			  				> 
@@ -70,7 +70,7 @@ class App extends Component {
 				<br />
 
 				{this.props.login && <ParkingsList/>}
-				{!this.props.login && this.state.signup && <SignupPage/>}
+				{!this.props.login && this.state.signup && <ParkingsList/>}
 				{!this.props.login && !this.state.signup && <LoginPage/>}
 
       		</div>
