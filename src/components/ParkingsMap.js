@@ -1,10 +1,15 @@
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps"
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { showCurrentParkingFromMap } from '../actions/index';
+// import { CAR_ICON } from '../consts/otherConstants';
 
 
 class ParkingsMap extends Component {
+
+	state = {
+		clickedMarkedId: 'P'
+	}
 
 	handleMarkerClick = (e) => {
 		this.props.showCurrentParkingFromMap({
@@ -15,11 +20,15 @@ class ParkingsMap extends Component {
 
 	render(){
 
-		let markersList = this.props.markers.map(({_id, lattitude, longitude}) => {
+		let markersList = this.props.markers.map(({_id, lattitude, longitude, name,
+			total_parking_space, free_parking_space }) => {
   			return( <Marker
   						key = {_id}
+  						position={{ lat: parseFloat(lattitude),
+  							 lng: parseFloat(longitude) }}
+  						label = {_id}
+  						title = { name }
   						onClick = {this.handleMarkerClick}
-  						position={{ lat: parseFloat(lattitude), lng: parseFloat(longitude) }}
   				 	/>
   				);
   			}
