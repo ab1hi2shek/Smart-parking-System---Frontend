@@ -128,4 +128,11 @@ export function showCurrentParkingFromMap(params){
     }
 }
 
+export function showLoadingBar(params){
+    return {
+        type: ActionTypes.SHOW_LOADING_BAR,
+        payload: params
+    }
+}
+
 

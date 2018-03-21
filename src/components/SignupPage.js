@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
-import {handleSignUp} from '../actions/index';
+import { connect } from 'react-redux';
+import { handleSignUp,  showLoadingBar } from '../actions/index';
+import './index.css';
+import Loading from 'react-loading-bar'
+import 'react-loading-bar/dist/index.css'
 
 class SignupPage extends Component {
 
@@ -61,7 +64,9 @@ class SignupPage extends Component {
 
 		else
 		{
-			console.log("button clicked");
+			this.props.showLoadingBar();
+			this.forceUpdate();
+			
 			this.props.signUpuser({ 
 				name: this.state.name,
 				email: this.state.email,
@@ -74,10 +79,15 @@ class SignupPage extends Component {
     	return (
     	
 	    	<div>
+	    		<Loading
+          			show={this.props.isLoading}
+          			color="red"
+        		/>
+
 	    		<div className="row">
 	    			<div className="col-md-4 offset-md-4">
 	    				<h2> Registration Page  </h2>
-	    				<div> {this.state.message} </div>
+	    				<div className = "display-message"> {this.state.message} </div>
 	    				<br />
 	    				
 	    				<form>
@@ -146,8 +156,18 @@ function mapDispatchToProps(dispatch){
 	return{
 		signUpuser: function(params) {
             dispatch(handleSignUp(params));
+        },
+
+		showLoadingBar: function(params) {
+            dispatch(showLoadingBar(params));
         }
 	}
 }
 
-export default connect(null,mapDispatchToProps)(SignupPage);
+function mapStateToProps(state){
+	return {
+		isLoading: state.isLoading === undefined ? false : state.isLoading
+	}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupPage);

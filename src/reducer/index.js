@@ -11,26 +11,30 @@ const parkings = (state = {}, action) => {
             name: action.payload.name,
             email: action.payload.email,
             token: action.payload.token,
-            login: true
+            login: true,
+            isLoading: false
         }
 
     case ActionTypes.LOG_IN_USER_FAILURE:
         return {
             message: "login failed",
             status: 0,
-            login: false
+            login: false,
+            isLoading: false
         }
 
     case ActionTypes.SIGN_UP_USER_SUCCESS:
         return {
             message: "You have been registered successfully. Login now",
-            status: 1
+            status: 1,
+            isLoading: false
         }
 
     case ActionTypes.SIGN_UP_USER_FAILURE:
         return {
             message: "Registration failed",
-            status: 0
+            status: 0,
+            isLoading: false
         }
 
     case ActionTypes.FETCH_PARKINGS_SUCCESS:
@@ -41,7 +45,8 @@ const parkings = (state = {}, action) => {
             name: state.name,
             email: state.email,
             token: state.token,
-            parkings: action.payload.parkings
+            parkings: action.payload.parkings,
+            isLoading: false
         }
 
     case ActionTypes.FETCH_PARKINGS_FAILURE:
@@ -51,7 +56,8 @@ const parkings = (state = {}, action) => {
             login: true,
             name: state.name,
             email: state.email,
-            token: state.token
+            token: state.token,
+            isLoading: false
         }
 
     case ActionTypes.SHORTEST_DIST_PARKING_SUCCESS:
@@ -64,8 +70,8 @@ const parkings = (state = {}, action) => {
             token: state.token,
             parkings: state.parkings,
             shortest_dist_parking: action.payload.minimumDistanceParking,
-            shortest_dist: action.payload.minimumDistance
-
+            shortest_dist: action.payload.minimumDistance,
+            isLoading: false
         }
 
     case ActionTypes.SHORTEST_DIST_PARKING_FAILURE:
@@ -76,7 +82,8 @@ const parkings = (state = {}, action) => {
             name: state.name,
             email: state.email,
             token: state.token,
-            parkings: state.parkings
+            parkings: state.parkings,
+            isLoading: false
         }
 
     case ActionTypes.OUR_ALGO_PARKING_SUCCESS:
@@ -89,8 +96,8 @@ const parkings = (state = {}, action) => {
             token: state.token,
             parkings: state.parkings,
             our_algo_parking: action.payload.minCostParking,
-            our_algo_cost: action.payload.minimumCost
-
+            our_algo_cost: action.payload.minimumCost,
+            isLoading: false
         }
 
     case ActionTypes.OUR_ALGO_PARKING_FAILURE:
@@ -101,7 +108,8 @@ const parkings = (state = {}, action) => {
             name: state.name,
             email: state.email,
             token: state.token,
-            parkings: state.parkings
+            parkings: state.parkings,
+            isLoading: false
         }
 
     case ActionTypes.LOG_OUT_USER:
@@ -117,6 +125,12 @@ const parkings = (state = {}, action) => {
                 lattitude: action.payload.lattitude,
                 longitude: action.payload.longitude
             }
+        }
+
+    case ActionTypes.SHOW_LOADING_BAR:
+        return {
+            ...state,
+            isLoading: true
         }
 
     default:

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { fetchParkings, fetchShortestParking, fetchOptimalParking } from '../actions/index';
+import { fetchParkings, fetchShortestParking, fetchOptimalParking, showLoadingBar } from '../actions/index';
 import ParkingsMap from './ParkingsMap';
 import * as Constants from '../consts/otherConstants';
+import Loading from 'react-loading-bar'
+import 'react-loading-bar/dist/index.css'
 
 class ParkingList extends Component {
 
@@ -17,10 +19,14 @@ class ParkingList extends Component {
     }
 
 	componentDidMount(){
+        this.props.showLoadingBar();
+        this.forceUpdate();
 		this.props.fetchParkings();
 	}
 
     handleShortestParking = () => {
+        this.props.showLoadingBar();
+        this.forceUpdate();
         this.setState({
             shortestAlgoButtonClick: true,
             optimalAlgoButtonClick: false
@@ -32,6 +38,8 @@ class ParkingList extends Component {
     }
 
     handleOptimalAlgorithm = () => {
+        this.props.showLoadingBar();
+        this.forceUpdate();
         this.setState({
             optimalAlgoButtonClick: true,
             shortestAlgoButtonClick: false
@@ -110,6 +118,11 @@ class ParkingList extends Component {
   		})
     	return (
     		<div className="row">
+                <Loading
+                    show={this.props.isLoading}
+                    color="red"
+                />
+
                 <div className="col-md-6">
 
           			<ParkingsMap 
@@ -233,6 +246,10 @@ function mapDispatchToProps(dispatch){
 
         fetchOptimalParking: function(params) {
             dispatch(fetchOptimalParking(params));
+        },
+
+        showLoadingBar: function(params) {
+            dispatch(showLoadingBar(params));
         }
 
 	}
@@ -254,7 +271,9 @@ function mapStateToProps(state){
             null : state.our_algo_parking,
 
         optimalAlgoCost: state.our_algo_cost === undefined ?
-            null : state.our_algo_cost
+            null : state.our_algo_cost,
+
+        isLoading: state.isLoading === undefined ? false : state.isLoading
 	}
 }
 

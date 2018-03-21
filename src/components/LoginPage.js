@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
-import {handleLogin} from '../actions/index';
+import { connect } from 'react-redux';
+import { handleLogin, showLoadingBar } from '../actions/index';
+import './index.css';
+import Loading from 'react-loading-bar'
+import 'react-loading-bar/dist/index.css'
 
 class ParkingsList extends Component {
 
@@ -39,6 +42,8 @@ class ParkingsList extends Component {
 
 		else
 		{
+			this.props.showLoadingBar();
+			this.forceUpdate();
 			this.props.loginUser({
 				email: this.state.email,
 				password: this.state.password
@@ -50,10 +55,15 @@ class ParkingsList extends Component {
     	return (
     	
 	    	<div>
+	    		<Loading
+          			show={this.props.isLoading}
+          			color="red"
+        		/>
 	    		<div className="row">
 	    			<div className="col-md-4 offset-md-4">
 	    				<h2> Login Page  </h2>
-	    				<div> {this.state.message} </div>
+	    				<div className="display-message"> {this.state.message} </div>
+	    				
 	    				<br />
 	    				
 	    				<form>
@@ -103,14 +113,18 @@ function mapDispatchToProps(dispatch){
 	return{
 		loginUser: function(params) {
             dispatch(handleLogin(params));
+        },
+
+		showLoadingBar: function(params) {
+            dispatch(showLoadingBar(params));
         }
 	}
 }
 
-// function mapStateToProps(state){
-// 	return {
-// 		token: state.token
-// 	}
-// }
+function mapStateToProps(state){
+	return {
+		isLoading: state.isLoading === undefined ? false : state.isLoading
+	}
+}
 
-export default connect(null, mapDispatchToProps)(ParkingsList);
+export default connect(mapStateToProps, mapDispatchToProps)(ParkingsList);
