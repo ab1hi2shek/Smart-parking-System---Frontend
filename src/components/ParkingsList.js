@@ -5,6 +5,7 @@ import ParkingsMap from './ParkingsMap';
 import * as Constants from '../consts/otherConstants';
 import Loading from 'react-loading-bar'
 import 'react-loading-bar/dist/index.css'
+import './index.css';
 
 class ParkingList extends Component {
 
@@ -12,8 +13,6 @@ class ParkingList extends Component {
         name: null,
         freeParkingSpace: null,
         totalParkingSpace: null,
-        shortestAlgoButtonClick: false,
-        optimalAlgoButtonClick: false,
         resultantLng: null,
         resultantLat: null
     }
@@ -27,10 +26,7 @@ class ParkingList extends Component {
     handleShortestParking = () => {
         this.props.showLoadingBar();
         this.forceUpdate();
-        this.setState({
-            shortestAlgoButtonClick: true,
-            optimalAlgoButtonClick: false
-        })
+        
         this.props.fetchShortestParking({
             location: Constants.MY_LOCATION,
             token: this.props.token,
@@ -40,10 +36,7 @@ class ParkingList extends Component {
     handleOptimalAlgorithm = () => {
         this.props.showLoadingBar();
         this.forceUpdate();
-        this.setState({
-            optimalAlgoButtonClick: true,
-            shortestAlgoButtonClick: false
-        })
+        
         this.props.fetchOptimalParking({
             location: Constants.MY_LOCATION,
             token: this.props.token,
@@ -151,7 +144,6 @@ class ParkingList extends Component {
                         <button 
                           className="btn btn-success mr-sm-4"
                           onClick = { this.handleShortestParking }
-                          disabled = { this.state.shortestAlgoButtonClick }
                         > 
                           Shortest Parking 
                         </button>
@@ -159,10 +151,12 @@ class ParkingList extends Component {
                         <button 
                           className="btn btn-success mr-sm-4"
                           onClick = { this.handleOptimalAlgorithm }
-                          disabled = { this.state.optimalAlgoButtonClick }
                         > 
                           Optimal Parking 
                         </button>
+                        {!this.props.status && 
+                            <div class="message-red">{this.props.message}</div>
+                        }
                         <br/>
                         <hr />
                     </div>
@@ -273,7 +267,11 @@ function mapStateToProps(state){
         optimalAlgoCost: state.our_algo_cost === undefined ?
             null : state.our_algo_cost,
 
-        isLoading: state.isLoading === undefined ? false : state.isLoading
+        isLoading: state.isLoading === undefined ? false : state.isLoading,
+
+        status: state.status === undefined ? 1 : state.status,
+
+        message: state.message === undefined ? null : state.message
 	}
 }
 

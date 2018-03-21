@@ -18,11 +18,13 @@ export function handleLogin(params) {
         })
         .then((response) => dispatch({
             type: ActionTypes.LOG_IN_USER_SUCCESS,
-            payload: response.data
+            payload: response.data,
+            meta: params
         }))
         .catch((err) => dispatch({
             type: ActionTypes.LOG_IN_USER_FAILURE,
-            payload: err.response
+            payload: err.response,
+            meta: params
         }))
     }
 }
@@ -44,11 +46,13 @@ export function handleSignUp(params) {
         })
         .then((response) => dispatch({
             type: ActionTypes.SIGN_UP_USER_SUCCESS,
-            payload: response.data
+            payload: response.data,
+            meta: params
         }))
         .catch((err) => dispatch({
             type: ActionTypes.SIGN_UP_USER_FAILURE,
-            payload: err.response
+            payload: err.response,
+            meta: params
         }))
     }
 }
@@ -63,11 +67,13 @@ export function fetchParkings(params) {
         })
         .then((response) => dispatch({
             type: ActionTypes.FETCH_PARKINGS_SUCCESS,
-            payload: response.data
+            payload: response.data,
+            meta: params
         }))
         .catch((err) => dispatch({
             type: ActionTypes.FETCH_PARKINGS_FAILURE,
-            payload: err.response
+            payload: err.response,
+            meta: params
         }))
     }
 }
@@ -84,11 +90,13 @@ export function fetchShortestParking(params) {
         })
         .then((response) => dispatch({
             type: ActionTypes.SHORTEST_DIST_PARKING_SUCCESS,
-            payload: response.data
+            payload: response.data,
+            meta: params
         }))
         .catch((err) => dispatch({
             type: ActionTypes.SHORTEST_DIST_PARKING_FAILURE,
-            payload: err.response
+            payload: err.response,
+            meta: params
         }))
     }
 }
@@ -105,11 +113,13 @@ export function fetchOptimalParking(params) {
         })
         .then((response) => dispatch({
             type: ActionTypes.OUR_ALGO_PARKING_SUCCESS,
-            payload: response.data
+            payload: response.data,
+            meta: params
         }))
         .catch((err) => dispatch({
             type: ActionTypes.OUR_ALGO_PARKING_FAILURE,
-            payload: err.response
+            payload: err.response,
+            meta: params
         }))
     }
 }

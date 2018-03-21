@@ -17,7 +17,7 @@ const parkings = (state = {}, action) => {
 
     case ActionTypes.LOG_IN_USER_FAILURE:
         return {
-            message: "login failed",
+            message: "Login failed - Try again.",
             status: 0,
             login: false,
             isLoading: false
@@ -25,7 +25,8 @@ const parkings = (state = {}, action) => {
 
     case ActionTypes.SIGN_UP_USER_SUCCESS:
         return {
-            message: "You have been registered successfully. Login now",
+            message: "You have registered successfully with email " +
+                action.meta.email + " Login now.",
             status: 1,
             isLoading: false
         }
@@ -76,7 +77,7 @@ const parkings = (state = {}, action) => {
 
     case ActionTypes.SHORTEST_DIST_PARKING_FAILURE:
         return {
-            message: "parking fetching failed using shortest distance",
+            message: "Request failed - Network error. Please try again.",
             status: 0,
             login: true,
             name: state.name,

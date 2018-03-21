@@ -30,7 +30,7 @@ class ParkingsList extends Component {
 		
 		if(this.state.email === ""){
 			this.setState({
-				message: "Plese enter your email address to login"
+				message: "Please enter your email address to login"
 			})
 		}
 
@@ -48,6 +48,10 @@ class ParkingsList extends Component {
 				email: this.state.email,
 				password: this.state.password
 			});
+
+			this.setState({
+				password: ""
+			})
 		}
 	}
 
@@ -62,7 +66,6 @@ class ParkingsList extends Component {
 	    		<div className="row">
 	    			<div className="col-md-4 offset-md-4">
 	    				<h2> Login Page  </h2>
-	    				<div className="display-message"> {this.state.message} </div>
 	    				
 	    				<br />
 	    				
@@ -87,6 +90,7 @@ class ParkingsList extends Component {
 					    			className="form-control"
 					    			id="password"
 					    			placeholder="Password"
+					    			value = {this.state.password}
 					    			onChange = {this.handlePassword}
 					    		/>
 				  			</div>
@@ -100,6 +104,12 @@ class ParkingsList extends Component {
 	  						</button>
 
 						</form>
+					</div>
+					<div className="col-md-4">
+						<div className="message-red"> {this.state.message} </div>
+	    				{ !this.props.status && 
+	    					<div className="message-red"> {this.props.message} </div>
+	    				}
 					</div>
 				</div>
 			</div>
@@ -123,7 +133,11 @@ function mapDispatchToProps(dispatch){
 
 function mapStateToProps(state){
 	return {
-		isLoading: state.isLoading === undefined ? false : state.isLoading
+		isLoading: state.isLoading === undefined ? false : state.isLoading,
+
+		status: state.status === undefined ? 1 : state.status,
+
+		message: state.message === undefined ? null : state.message
 	}
 }
 

@@ -72,6 +72,12 @@ class SignupPage extends Component {
 				email: this.state.email,
 				password: this.state.password
 			})
+
+			this.setState({
+				password: "",
+				confirmPassword: ""
+			})
+
 		}
 	}
 
@@ -87,9 +93,7 @@ class SignupPage extends Component {
 	    		<div className="row">
 	    			<div className="col-md-4 offset-md-4">
 	    				<h2> Registration Page  </h2>
-	    				<div className = "display-message"> {this.state.message} </div>
 	    				<br />
-	    				
 	    				<form>
 	    					<div className="form-group">
 		    					<label htmlFor="name">Full Name</label>
@@ -121,6 +125,7 @@ class SignupPage extends Component {
 					    			className="form-control"
 					    			id="password"
 					    			placeholder="Password"
+					    			value = {this.state.password}
 					    			onChange = {this.handlePassword}
 					    		/>
 				  			</div>
@@ -132,6 +137,7 @@ class SignupPage extends Component {
 					    			className="form-control"
 					    			id="password-confirm"
 					    			placeholder="Retype Password"
+					    			value = {this.state.confirmPassword}
 					    			onChange = {this.handlePasswordConfirm}
 					    		/>
 				  			</div>
@@ -145,6 +151,14 @@ class SignupPage extends Component {
 	  						</button>
 						</form>
 					</div>
+
+					<div className="col-md-4">
+						{ !this.props.message && 
+							<div className = "message-red"> {this.state.message} </div>
+						}
+	    				<div className="message-red"> {this.props.message} </div>
+					</div>
+
 				</div>
 			</div>
     	);
@@ -166,7 +180,9 @@ function mapDispatchToProps(dispatch){
 
 function mapStateToProps(state){
 	return {
-		isLoading: state.isLoading === undefined ? false : state.isLoading
+		isLoading: state.isLoading === undefined ? false : state.isLoading,
+
+		message: state.message === undefined ? null : state.message
 	}
 }
 
