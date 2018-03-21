@@ -41,20 +41,34 @@ class ParkingList extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        if(nextProps.parkingToShowFromMap !== null &&
-             this.props.parkingToShowFromMap !== nextProps.parkingToShowFromMap){
+
+        let currParking = nextProps.parkingToShowFromMap;
+        let currLong = currParking ? currParking.longitude : null;
+        let currLat = currParking ? currParking.lattitude : null;
+
+        let condition = nextProps.parkingToShowFromMap !== null &&
+             this.props.parkingToShowFromMap !== nextProps.parkingToShowFromMap;
+
+        let myLat = Constants.MY_LOCATION.lattitude;
+        let myLong = Constants.MY_LOCATION.longitude;
+
+        if(condition){
                 this.props.parkings.map(item => {
-                if(item.longitude === nextProps.parkingToShowFromMap.longitude.toFixed(6) &&
-                    item.lattitude === nextProps.parkingToShowFromMap.lattitude.toFixed(6)){
-                    console.log("hahaha");
+                if(item.longitude === currLong.toFixed(6) &&
+                    item.lattitude === currLat.toFixed(6)){
                     this.setState({
                         name: item.name,
                         freeParkingSpace: item.free_parking_space,
                         totalParkingSpace: item.total_parking_space
                     })
                 }
-                else{
-                    console.log("mc bhadwa");
+                else if(myLong === currLong.toFixed(6) &&
+                    myLat === currLat.toFixed(6)){
+                    this.setState({
+                        name: "Your current location",
+                        freeParkingSpace: null,
+                        totalParkingSpace: null
+                    })
                 }
             })
         }
@@ -80,6 +94,9 @@ class ParkingList extends Component {
                         zoom = { Constants.ZOOM }
                         defaultCenter = { Constants.DEFAULT_CENTER }
                         showMarkerDetails = { this.showMarkerDetails }
+                        myLocationShown
+                        myLattitude = { Constants.MY_LOCATION.lattitude }
+                        myLongitude = { Constants.MY_LOCATION.longitude }
                     />
 
                 </div>
@@ -144,15 +161,22 @@ class ParkingList extends Component {
                             <div className="row">
                                 <div class="alert alert-success" role="alert">
                                     <h4 class="alert-heading">{this.state.name}</h4>
-                                    <hr/>
-                                    <p class="mb-0">
-                                        <strong>Free Paking Space</strong>&nbsp;-&nbsp; 
-                                        {this.state.freeParkingSpace}
-                                    </p>
-                                    <p class="mb-0">
-                                        <strong>Total Parking Space</strong>&nbsp;-&nbsp; 
-                                        {this.state.totalParkingSpace}
-                                    </p>
+                                    
+                                    { this.state.freeParkingSpace &&
+                                        <div>
+                                            <hr/> 
+                                            <p class="mb-0">
+                                                <strong>Free Paking Space</strong>&nbsp;-&nbsp; 
+                                                {this.state.freeParkingSpace}
+                                            </p>
+                                        </div>
+                                    }
+                                    { this.state.totalParkingSpace &&
+                                        <p class="mb-0">
+                                            <strong>Total Parking Space</strong>&nbsp;-&nbsp; 
+                                            {this.state.totalParkingSpace}
+                                        </p>
+                                    }
                                 </div>
                             </div>
                         </div>

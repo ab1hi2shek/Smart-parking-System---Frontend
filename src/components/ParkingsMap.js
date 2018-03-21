@@ -30,7 +30,15 @@ class ParkingsMap extends Component {
     			defaultZoom={ this.props.zoom }
     			defaultCenter={ this.props.defaultCenter }
   			>
-    		{ this.props.isMarkerShown && markersList }
+  			{ this.props.isMarkerShown && markersList }
+    		{ this.props.myLocationShown &&
+    			<Marker
+    				onClick = {this.handleMarkerClick}
+    				position = {{lat: parseFloat(this.props.myLattitude), 
+    								lng: parseFloat(this.props.myLongitude) }}
+    				icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+    			/>  
+    		}
   			</GoogleMap>
 		);
 	}
