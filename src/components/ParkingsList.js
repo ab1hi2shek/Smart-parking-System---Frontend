@@ -11,7 +11,9 @@ class ParkingList extends Component {
         freeParkingSpace: null,
         totalParkingSpace: null,
         shortestAlgoButtonClick: false,
-        optimalAlgoButtonClick: false 
+        optimalAlgoButtonClick: false,
+        resultantLng: null,
+        resultantLat: null
     }
 
 	componentDidMount(){
@@ -52,24 +54,51 @@ class ParkingList extends Component {
         let myLat = Constants.MY_LOCATION.lattitude;
         let myLong = Constants.MY_LOCATION.longitude;
 
+        if(currLong != null && typeof currLong !== 'string'){
+            currLong = currLong.toFixed(6);
+            currLat = currLat.toFixed(6);
+        }
+
         if(condition){
                 this.props.parkings.map(item => {
-                if(item.longitude === currLong.toFixed(6) &&
-                    item.lattitude === currLat.toFixed(6)){
+                if(item.longitude === currLong &&
+                    item.lattitude === currLat){
                     this.setState({
                         name: item.name,
                         freeParkingSpace: item.free_parking_space,
                         totalParkingSpace: item.total_parking_space
                     })
                 }
-                else if(myLong === currLong.toFixed(6) &&
-                    myLat === currLat.toFixed(6)){
+                else if(myLong === currLong &&
+                    myLat === currLat){
                     this.setState({
                         name: "Your current location",
                         freeParkingSpace: null,
                         totalParkingSpace: null
                     })
                 }
+            })
+        }
+
+        let srtPrk = nextProps.shortestDistParking
+        let conditionButtonClicked1 = srtPrk !== null && (srtPrk.lattitude !==
+             this.state.resultantLat || srtPrk.longitude !== this.setState.resultantLng)
+
+        if (conditionButtonClicked1){
+            this.setState({
+                resultantLng: srtPrk.longitude,
+                resultantLat: srtPrk.lattitude
+            })
+        }
+
+        let optPrk = nextProps.optimalAlgoParking
+        let conditionButtonClicked2 = optPrk !== null && (optPrk.lattitude !==
+             this.state.resultantLat || optPrk.longitude !== this.setState.resultantLng)
+
+        if (conditionButtonClicked2){
+            this.setState({
+                resultantLng: optPrk.longitude,
+                resultantLat: optPrk.lattitude
             })
         }
     }
@@ -97,6 +126,8 @@ class ParkingList extends Component {
                         myLocationShown
                         myLattitude = { Constants.MY_LOCATION.lattitude }
                         myLongitude = { Constants.MY_LOCATION.longitude }
+                        resultantLat = { this.state.resultantLat }
+                        resultantLng = { this.state.resultantLng }
                     />
 
                 </div>
