@@ -134,6 +134,48 @@ const parkings = (state = {}, action) => {
             isLoading: true
         }
 
+    case ActionTypes.BOOK_PARKING_SUCCESS:
+        return {
+            message: action.meta.parkingToUpdate.name + ' parking slot booked successfully.',
+            status: 0,
+            login: true,
+            name: state.name,
+            email: state.email,
+            token: state.token,
+            parkings: action.payload.parkings,
+            isLoading: false
+        }
+
+    case ActionTypes.BOOK_PARKING_FAILURE:
+        return {
+            ...state,
+            status: 0,
+            message: 'Request unsuccessful - try again',
+            isLoading: false
+        }
+
+    case ActionTypes.RESET_TO_DEFAULT_SUCCESS:
+        return {
+            message: ' Initial parking data loaded successfully.',
+            status: 0,
+            login: true,
+            name: state.name,
+            email: state.email,
+            token: state.token,
+            parkings: action.payload.parkings,
+            isLoading: false
+        }
+
+    case ActionTypes.RESET_TO_DEFAULT_FAILURE:
+        return {
+            ...state,
+            status: 0,
+            message: 'Request unsuccessful - try again',
+            isLoading: false
+        }
+
+
+
     default:
         return state
 

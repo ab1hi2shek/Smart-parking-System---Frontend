@@ -25,6 +25,11 @@ class ParkingsMap extends Component {
 		});
 	}
 
+	handleDragged = (e) => {
+		console.log(e.latLng.lat());
+		console.log(e.latLng.lng());
+	}
+
 	componentWillReceiveProps(nextProps){
 		if(nextProps.resultantLat !== null && (nextProps.resultantLat !==
 			this.props.resultantLat || nextProps.resultantLng !== this.props.resultantLng)){
@@ -68,6 +73,7 @@ class ParkingsMap extends Component {
   							 lng: parseFloat(longitude) }}
   						title = { name }
   						icon = {image}
+  						draggable = {true}
   						onClick = {this.handleMarkerClick}
   				 	/>
   				);	
@@ -78,7 +84,12 @@ class ParkingsMap extends Component {
 	  						position={{ lat: parseFloat(lattitude),
 	  							 lng: parseFloat(longitude) }}
 	  						title = { name }
+	  						draggable = {true}
 	  						onClick = {this.handleMarkerClick}
+	  						onDraggableChanged = {() => console.log("onDraggableChanged")}
+	  						onDrag = {() => console.log("onDrag")}
+	  						onDragStart = {() => console.log("onDragStart")}
+	  						onDragEnd = {(e) => console.log(e.latLng.lat())}
 	  				 	/>
 	  				);
 	  			}

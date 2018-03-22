@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { fetchParkings, fetchShortestParking, fetchOptimalParking, showLoadingBar } from '../actions/index';
+import { fetchParkings, fetchShortestParking, fetchOptimalParking, 
+    showLoadingBar, bookParkingSlot, resetToDefault } from '../actions/index';
 import ParkingsMap from './ParkingsMap';
 import * as Constants from '../consts/otherConstants';
 import Loading from 'react-loading-bar'
@@ -14,7 +15,8 @@ class ParkingList extends Component {
         freeParkingSpace: null,
         totalParkingSpace: null,
         resultantLng: null,
-        resultantLat: null
+        resultantLat: null,
+        isBooked: false
     }
 
 	componentDidMount(){
@@ -43,7 +45,25 @@ class ParkingList extends Component {
         });
     }
 
+    handleBookParking = () => {
+        this.setState({isBooked: true})
+        this.props.showLoadingBar();
+        this.forceUpdate();
+        this.props.bookParkingSlot({
+            parkingToUpdate: this.props.optimalAlgoParking
+        });
+    }
+
+    resetToDefault = () => {
+        this.props.showLoadingBar();
+        this.forceUpdate();
+        this.props.resetToDefault();
+    }
+
     componentWillReceiveProps(nextProps){
+
+        if(nextProps.parkings !== this.props.parkings)
+            this.forceUpdate();
 
         let currParking = nextProps.parkingToShowFromMap;
         let currLong = currParking ? currParking.longitude : null;
@@ -154,8 +174,27 @@ class ParkingList extends Component {
                         > 
                           Optimal Parking 
                         </button>
+
+                        {this.props.optimalAlgoParking && 
+                            <button 
+                                className="btn btn-info mr-sm-4"
+                                onClick = { this.handleBookParking }
+                            > 
+                                Book 
+                            </button>
+                        }
+
+                        {this.state.isBooked && 
+                            <button 
+                                className="btn btn-info mr-sm-4"
+                                onClick = { this.resetToDefault }
+                            > 
+                                Reset to default 
+                            </button>
+                        }
+
                         {!this.props.status && 
-                            <div class="message-red">{this.props.message}</div>
+                            <div className="message-red">{this.props.message}</div>
                         }
                         <br/>
                         <hr />
@@ -166,7 +205,7 @@ class ParkingList extends Component {
                             <div>
                                 <br/>
                                 <br/>
-                                <div class="alert alert-info" role="alert">
+                                <div className="alert alert-info" role="alert">
                                     The shortest distance parking from your location is 
                                     &nbsp;<strong>{this.props.shortestDistParking.name}
                                     </strong> with distance of 
@@ -180,7 +219,7 @@ class ParkingList extends Component {
                             <div>
                                 <br/>
                                 <br/>
-                                <div class="alert alert-info" role="alert">
+                                <div className="alert alert-info" role="alert">
                                     The optimal parking from your location based on distance
                                     as well as number of free parking slots is
                                     &nbsp;<strong>{this.props.optimalAlgoParking.name}
@@ -197,20 +236,20 @@ class ParkingList extends Component {
                             <br/>
                             <br/>
                             <div className="row">
-                                <div class="alert alert-success" role="alert">
-                                    <h4 class="alert-heading">{this.state.name}</h4>
+                                <div className="alert alert-success" role="alert">
+                                    <h4 className="alert-heading">{this.state.name}</h4>
                                     
                                     { this.state.freeParkingSpace &&
                                         <div>
                                             <hr/> 
-                                            <p class="mb-0">
+                                            <p className="mb-0">
                                                 <strong>Free Paking Space</strong>&nbsp;-&nbsp; 
                                                 {this.state.freeParkingSpace}
                                             </p>
                                         </div>
                                     }
                                     { this.state.totalParkingSpace &&
-                                        <p class="mb-0">
+                                        <p className="mb-0">
                                             <strong>Total Parking Space</strong>&nbsp;-&nbsp; 
                                             {this.state.totalParkingSpace}
                                         </p>
@@ -244,6 +283,14 @@ function mapDispatchToProps(dispatch){
 
         showLoadingBar: function(params) {
             dispatch(showLoadingBar(params));
+        },
+
+        bookParkingSlot: function(params) {
+            dispatch(bookParkingSlot(params));
+        },
+
+        resetToDefault: function(params) {
+            dispatch(resetToDefault(params));
         }
 
 	}

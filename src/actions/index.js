@@ -145,4 +145,52 @@ export function showLoadingBar(params){
     }
 }
 
+export function bookParkingSlot(params){
+    return function(dispatch){
+        
+        let currPark = params.parkingToUpdate;
+        let data = [{
+            "propName": "free_parking_space",
+            "value": params.parkingToUpdate.free_parking_space - 1
+        }]
+
+        axios.patch(URL + 'parkings/' + params.parkingToUpdate._id, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => dispatch({
+            type: ActionTypes.BOOK_PARKING_SUCCESS,
+            payload: response.data,
+            meta: params
+        }))
+        .catch((err) => dispatch({
+            type: ActionTypes.BOOK_PARKING_FAILURE,
+            payload: err.response,
+            meta: params
+        }))
+    }
+}
+
+export function resetToDefault(params){
+    return function(dispatch){
+      
+        axios.get(URL + 'parkings/reset', {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => dispatch({
+            type: ActionTypes.RESET_TO_DEFAULT_SUCCESS,
+            payload: response.data,
+            meta: params
+        }))
+        .catch((err) => dispatch({
+            type: ActionTypes.RESET_TO_DEFAULT_FAILURE,
+            payload: err.response,
+            meta: params
+        }))
+    }
+}
+
 
