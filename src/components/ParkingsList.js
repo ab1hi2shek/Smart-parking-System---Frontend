@@ -52,12 +52,24 @@ class ParkingList extends Component {
         this.props.bookParkingSlot({
             parkingToUpdate: this.props.optimalAlgoParking
         });
+        
+        this.setState({
+            name: "",
+            freeParkingSpace: "",
+            totalParkingSpace: ""
+        })
     }
 
     resetToDefault = () => {
         this.props.showLoadingBar();
         this.forceUpdate();
         this.props.resetToDefault();
+
+        this.setState({
+            name: "",
+            freeParkingSpace: "",
+            totalParkingSpace: ""
+        })
     }
 
     componentWillReceiveProps(nextProps){
