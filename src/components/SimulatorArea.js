@@ -30,7 +30,8 @@ class SimulatorArea extends Component {
 
         let secCounterTimerID = setInterval(() => {
             if(new Date() > timeout || !this.props.simulation){
-                clearInterval(secCounterTimerID)
+                clearInterval(secCounterTimerID);
+                this.props.handleStopSimulation();
             }
             else {
                 currTimeElapsed = currTimeElapsed + 1;
