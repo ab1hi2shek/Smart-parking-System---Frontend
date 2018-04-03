@@ -1,16 +1,25 @@
 import * as ActionTypes from '../consts/actionTypes';
 import axios from 'axios';
-import { URL } from '../consts/otherConstants';
+import { URL, DEFAULT_CENTER, RADIUS } from '../consts/otherConstants';
+import { defaultParking } from '../consts/parkings';
 
-export function handleLogin(params) {
-
+export function handleLogin(params){
+    if(params.email === 'admin@admin.com' && params.password === 'admin'){
+        let dummyValue = {
+            name: 'admin',
+            email: 'admin@admin.com'
+        };
+        return{
+            type: ActionTypes.LOG_IN_USER_SUCCESS,
+            payload: dummyValue,
+            meta: params
+        }
+    }
     return function(dispatch){
-
         let data = {
             email: params.email,
             password: params.password
-        }
-
+        };
         axios.post(URL + 'user/login', data, {
             headers: {
                 'Content-Type': 'application/json'
@@ -29,16 +38,13 @@ export function handleLogin(params) {
     }
 }
 
-export function handleSignUp(params) {
-    
+export function handleSignUp(params){
     return function(dispatch){
-
         let data = {
             name: params.name,
             email: params.email,
             password: params.password
-        }
-        
+        };
         axios.post(URL + 'user/signup', data, {
             headers: {
                 'Content-Type': 'application/json'
@@ -57,140 +63,118 @@ export function handleSignUp(params) {
     }
 }
 
-export function fetchParkings(params) {
-    
-    return function(dispatch){
-        axios.get(URL + 'parkings', {
-           headers: {
-                'Content-Type': 'application/json'
-            } 
-        })
-        .then((response) => dispatch({
-            type: ActionTypes.FETCH_PARKINGS_SUCCESS,
-            payload: response.data,
-            meta: params
-        }))
-        .catch((err) => dispatch({
-            type: ActionTypes.FETCH_PARKINGS_FAILURE,
-            payload: err.response,
-            meta: params
-        }))
-    }
-}
-
-export function fetchShortestParking(params) {
-    
-    return function(dispatch){
-
-        axios.get(URL + 'shortest-dist?lattitude='
-            + params.location.lattitude + '&longitude=' + params.location.longitude, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => dispatch({
-            type: ActionTypes.SHORTEST_DIST_PARKING_SUCCESS,
-            payload: response.data,
-            meta: params
-        }))
-        .catch((err) => dispatch({
-            type: ActionTypes.SHORTEST_DIST_PARKING_FAILURE,
-            payload: err.response,
-            meta: params
-        }))
-    }
-}
-
-export function fetchOptimalParking(params) {
-    
-    return function(dispatch){
-        
-        axios.get(URL + 'our-algo?lattitude='
-            + params.location.lattitude + '&longitude=' + params.location.longitude, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => dispatch({
-            type: ActionTypes.OUR_ALGO_PARKING_SUCCESS,
-            payload: response.data,
-            meta: params
-        }))
-        .catch((err) => dispatch({
-            type: ActionTypes.OUR_ALGO_PARKING_FAILURE,
-            payload: err.response,
-            meta: params
-        }))
-    }
-}
-
 export function handleLogout(params){
     return {
         type: ActionTypes.LOG_OUT_USER,
-        payload: params
+        payload: null,
+        meta: params
     }
 }
 
-export function showCurrentParkingFromMap(params){
+export function handleFetchParkings(params){
+
+    let parking2DArray = createParkingDS(defaultParking);
     return {
-        type: ActionTypes.SHOW_CURRENT_PARKING_FROM_MAP,
-        payload: params
+        type: ActionTypes.FETCH_PARKINGS,
+        payload: {
+            defaultParking: defaultParking,
+            parking2DArray: parking2DArray,
+            simulation: false
+        },
+        meta: params
     }
 }
 
-export function showLoadingBar(params){
-    return {
-        type: ActionTypes.SHOW_LOADING_BAR,
-        payload: params
+export function handleShowCurrentCarToMap(params){
+    let currCarPosition = generateRandomPosition();
+    return{
+        type: ActionTypes.SHOW_CURRENT_CAR,
+        payload: {
+            currCarPosition: currCarPosition
+        },
+        meta: params
     }
 }
 
-export function bookParkingSlot(params){
-    return function(dispatch){
-        
-        let currPark = params.parkingToUpdate;
-        let data = [{
-            "propName": "free_parking_space",
-            "value": params.parkingToUpdate.free_parking_space - 1
-        }]
-
-        axios.patch(URL + 'parkings/' + params.parkingToUpdate._id, data, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => dispatch({
-            type: ActionTypes.BOOK_PARKING_SUCCESS,
-            payload: response.data,
-            meta: params
-        }))
-        .catch((err) => dispatch({
-            type: ActionTypes.BOOK_PARKING_FAILURE,
-            payload: err.response,
-            meta: params
-        }))
+export function handleBookParking(params){
+    return{
+        type: ActionTypes.BOOK_PARKING
     }
 }
 
-export function resetToDefault(params){
-    return function(dispatch){
-      
-        axios.get(URL + 'parkings/reset', {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => dispatch({
-            type: ActionTypes.RESET_TO_DEFAULT_SUCCESS,
-            payload: response.data,
-            meta: params
-        }))
-        .catch((err) => dispatch({
-            type: ActionTypes.RESET_TO_DEFAULT_FAILURE,
-            payload: err.response,
-            meta: params
-        }))
+export function handleShortestDistParking(params){
+    return{
+        type: ActionTypes.SHORTEST_DIST_PARKING
     }
 }
 
+export function handleOptimalAlgoParking(params){
+    return{
+        type: ActionTypes.OPTIMAL_PARKING
+    }
+}
 
+export function handleLoadingBar(params){
+    return{
+        type: ActionTypes.SHOW_LOADING_BAR
+    }
+}
+
+export function handleBackgroundAction(params){
+    return{
+        type: ActionTypes.BACKGROUND_ACTION,
+        payload: null,
+        meta: params
+    }
+}
+
+export function handleStopSimulation(params){
+    return{
+        type: ActionTypes.STOP_SIMULATION,
+        payload: null,
+        meta: params
+    }
+}
+
+export function handleStartSimulation(params){
+    return{
+        type: ActionTypes.START_SIMULATION,
+        payload: null,
+        meta: params
+    }
+}
+
+//**************************************  Helper functions start from here *********************************************************
+
+function createParkingDS(parkings){
+    let row = parkings.length;
+    let parkingsDS = new Array(row);
+
+    for(let i=0; i<row; i++){
+        let col = parkings[i].parkingSpace;
+        parkingsDS[i] = new Array(col);
+    }
+
+    for(let i=0; i<row; i++){
+        for(let j=0; j<parkingsDS[i].length; j++){
+            parkingsDS[i][j] = Math.floor(Math.random() * 10) + 1 ;
+        }
+    }
+    return parkingsDS;
+}
+
+function generateRandomPosition(){
+    const y0 = DEFAULT_CENTER.lat;
+    const x0 = DEFAULT_CENTER.lng;
+    const rd = RADIUS / 111300;
+
+    let w = rd * Math.sqrt(Math.random());
+    let t = 2 * Math.PI * Math.random();
+    let x = w * Math.cos(t);
+    let y = w * Math.sin(t);
+
+    return{
+        lattitude: y + y0,
+        longitude: x + x0
+    }
+}

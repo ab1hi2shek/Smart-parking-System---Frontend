@@ -1,7 +1,17 @@
 .message-red{
-	color: red;
+    color: red;
 }
 
 .message-blue{
-	color: blue;
+    color: blue;
+}
+
+.parking-message-container{
+    background-color: lightgrey;
+    color: saddlebrown;
+    overflow: scroll;
+    overflow-x: hidden;
+    position: fixed;
+    height: 100%;
+    width: 50%;
 }

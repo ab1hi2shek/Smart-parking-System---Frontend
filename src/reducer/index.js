@@ -1,5 +1,5 @@
-import * as ActionTypes from'../consts/actionTypes';
-
+import * as ActionTypes from '../consts/actionTypes';
+import { decreaseOneSecond } from '../consts/externalFunctions';
 const parkings = (state = {}, action) => {
 
 	switch (action.type) {
@@ -10,10 +10,9 @@ const parkings = (state = {}, action) => {
             status: 1,
             name: action.payload.name,
             email: action.payload.email,
-            token: action.payload.token,
             login: true,
             isLoading: false
-        }
+        };
 
     case ActionTypes.LOG_IN_USER_FAILURE:
         return {
@@ -21,165 +20,105 @@ const parkings = (state = {}, action) => {
             status: 0,
             login: false,
             isLoading: false
-        }
+        };
 
     case ActionTypes.SIGN_UP_USER_SUCCESS:
         return {
             message: "You have registered successfully with email " +
-                action.meta.email + " Login now.",
+                action.meta.email + ". Please Login now.",
             status: 1,
             isLoading: false
-        }
+        };
 
     case ActionTypes.SIGN_UP_USER_FAILURE:
         return {
             message: "Registration failed",
             status: 0,
             isLoading: false
-        }
+        };
 
-    case ActionTypes.FETCH_PARKINGS_SUCCESS:
+    case ActionTypes.FETCH_PARKINGS:
     	return {
-            message: "parking fetched successfully",
-            status: 1,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: action.payload.parkings,
-            isLoading: false
-        }
+            ...state,
+            message: "parking fetch successful",
+            parkings: action.payload.defaultParking,
+            currCarPosition: {
+                lattitude: 0,
+                longitude: 0
+            },
+            parking2DArray: action.payload.parking2DArray,
+            simulation: action.payload.simulation,
+            carStatusMessage: []
+        };
 
-    case ActionTypes.FETCH_PARKINGS_FAILURE:
-        return {
-            message: "parking fetching failed",
-            status: 0,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            isLoading: false
-        }
-
-    case ActionTypes.SHORTEST_DIST_PARKING_SUCCESS:
+    case ActionTypes.SHORTEST_DIST_PARKING:
     	return {
-            message: "parking successfully found using shortest distance",
-            status: 1,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: state.parkings,
-            shortest_dist_parking: action.payload.minimumDistanceParking,
-            shortest_dist: action.payload.minimumDistance,
-            isLoading: false
-        }
+            ...state,
+            messgae: "parking fetched on the basis of distance",
+            shortestDistParking: action.payload.shortestDistParking,
+            shortestDist: action.payload.shortestDist
+        };
 
-    case ActionTypes.SHORTEST_DIST_PARKING_FAILURE:
-        return {
-            message: "Request failed - Network error. Please try again.",
-            status: 0,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: state.parkings,
-            isLoading: false
-        }
-
-    case ActionTypes.OUR_ALGO_PARKING_SUCCESS:
+    case ActionTypes.OPTIMAL_PARKING:
     	return {
-            message: "parking successfully found using optimal algorithm",
-            status: 1,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: state.parkings,
-            our_algo_parking: action.payload.minCostParking,
-            our_algo_cost: action.payload.minimumCost,
-            isLoading: false
-        }
-
-    case ActionTypes.OUR_ALGO_PARKING_FAILURE:
-        return {
-            message: "parking fetching failed using optimal algorithm",
-            status: 0,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: state.parkings,
-            isLoading: false
-        }
+            ...state,
+            message: "parking fetched on the basis of optimal algorithm",
+            optimalParking: action.payload.optimalParking,
+            optimalParkingCost: action.payload.optimalParkingCost
+        };
 
     case ActionTypes.LOG_OUT_USER:
         return {
             message: "log out successful",
-            status: 1
-        }
+            login: false,
+            status: 1,
+            simulation: false
+        };
 
-    case ActionTypes.SHOW_CURRENT_PARKING_FROM_MAP:
+        case ActionTypes.SHOW_CURRENT_CAR:
         return {
             ...state,
-            parkingToShowFromMap: {
-                lattitude: action.payload.lattitude,
-                longitude: action.payload.longitude
-            }
-        }
+            carLocationShown: true,
+            currCarPosition: action.payload.currCarPosition,
+            carStatusMessage: [...state.carStatusMessage,
+                "Car " + action.meta.carNumber + " wants to be parked."
+                ]
+        };
+
+    case ActionTypes.BOOK_PARKING:
+        return {
+            ...state
+        };
 
     case ActionTypes.SHOW_LOADING_BAR:
         return {
             ...state,
             isLoading: true
-        }
+        };
 
-    case ActionTypes.BOOK_PARKING_SUCCESS:
-        return {
-            message: action.meta.parkingToUpdate.name + ' parking slot booked successfully.',
-            status: 0,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: action.payload.parkings,
-            isLoading: false
-        }
+        case ActionTypes.BACKGROUND_ACTION:
+            let currParking2DArray = state.parking2DArray;
+            currParking2DArray = decreaseOneSecond(currParking2DArray);
 
-    case ActionTypes.BOOK_PARKING_FAILURE:
-        return {
-            ...state,
-            status: 0,
-            message: 'Request unsuccessful - try again',
-            isLoading: false
-        }
+            return {
+                ...state,
+                parking2DArray: currParking2DArray
+            };
+        case ActionTypes.START_SIMULATION:
+            return{
+                ...state,
+                simulation: true
+            };
 
-    case ActionTypes.RESET_TO_DEFAULT_SUCCESS:
-        return {
-            message: ' Initial parking data loaded successfully.',
-            status: 0,
-            login: true,
-            name: state.name,
-            email: state.email,
-            token: state.token,
-            parkings: action.payload.parkings,
-            isLoading: false
-        }
-
-    case ActionTypes.RESET_TO_DEFAULT_FAILURE:
-        return {
-            ...state,
-            status: 0,
-            message: 'Request unsuccessful - try again',
-            isLoading: false
-        }
-
-
+        case ActionTypes.STOP_SIMULATION:
+            return{
+                ...state,
+                simulation: false
+            };
 
     default:
         return state
-
     }
-}
+};
  
 export default parkings;

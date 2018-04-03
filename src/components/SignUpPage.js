@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { handleLogin, handleLoadingBar } from '../actions/index';
+import { handleSignUp,  handleLoadingBar } from '../actions/index';
 import './index.css';
 
-class ParkingsList extends Component {
+class SignupPage extends Component {
 
     state = {
+        name: "",
         email: "",
         password: "",
+        confirmPassword: "",
         message: ""
+    };
+
+    handleName = (e) => {
+        this.setState({
+            name: e.target.value
+        })
     };
 
     handleEmail = (e) => {
@@ -23,40 +31,73 @@ class ParkingsList extends Component {
         })
     };
 
+    handlePasswordConfirm = (e) => {
+        this.setState({
+            confirmPassword: e.target.value
+        })
+    };
+
     handleSubmit = (e) => {
         e.preventDefault();
-        if(this.state.email === ""){
+        if(this.state.name === ""){
             this.setState({
-                message: "Please enter your email address to login"
+                message: "Please enter your name"
             })
         }
-        else if(this.state.password === ""){
+        else if(this.state.email === ""){
             this.setState({
-                message: "Plese enter your password to login"
-            })
+                message: "Please enter your email address"
+            });
+        }
+        else if(this.state.password.length < 6){
+            this.setState({
+                message: "Please choose a password of length of at least 6"
+            });
+        }
+        else if(this.state.password !== this.state.confirmPassword){
+            this.setState({
+                message: "password mismatch - please enter again"
+            });
         }
         else
         {
             this.props.handleLoadingBar();
             this.forceUpdate();
-            this.props.handleLogin({
+
+            this.props.handleSignUp({
+                name: this.state.name,
                 email: this.state.email,
                 password: this.state.password
             });
+            this.setState({
+                password: "",
+                confirmPassword: ""
+            })
+
         }
     };
 
     render() {
         return <div className="row">
             <div className="col-md-4 offset-md-4">
-                <h2> Login Page </h2>
+                <h2> Registration Page </h2>
                 <br/>
-
                 <form>
+                    <div className="form-group">
+                        <label htmlFor="name">Full Name</label>
+                        <input
+                            autoFocus
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            placeholder="Enter your full name"
+                            onChange={this.handleName}
+                        />
+                    </div>
+
                     <div className="form-group">
                         <label htmlFor="email">Email address</label>
                         <input
-                            autoFocus
                             type="email"
                             className="form-control"
                             id="email"
@@ -77,6 +118,18 @@ class ParkingsList extends Component {
                         />
                     </div>
 
+                    <div className="form-group">
+                        <label htmlFor="password-confirm">Confirm Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            id="password-confirm"
+                            placeholder="Retype Password"
+                            value={this.state.confirmPassword}
+                            onChange={this.handlePasswordConfirm}
+                        />
+                    </div>
+
                     <button
                         type="submit"
                         className="btn btn-primary"
@@ -84,23 +137,24 @@ class ParkingsList extends Component {
                     >
                         Submit
                     </button>
-
                 </form>
             </div>
+
             <div className="col-md-4">
+                {!this.props.message &&
                 <div className="message-red"> {this.state.message} </div>
+                }
                 <div className="message-red"> {this.props.message} </div>
             </div>
+
         </div>;
     }
 }
 
-
 function mapDispatchToProps(dispatch){
-
     return{
-        handleLogin: function(params) {
-            dispatch(handleLogin(params));
+        handleSignUp: function(params) {
+            dispatch(handleSignUp(params));
         },
         handleLoadingBar: function(params) {
             dispatch(handleLoadingBar(params));
@@ -114,4 +168,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ParkingsList);
+export default connect(mapStateToProps, mapDispatchToProps)(SignupPage);

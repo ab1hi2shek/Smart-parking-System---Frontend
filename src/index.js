@@ -1,5 +1,6 @@
 import React from 'react';
 import App from './components/App';
+import Dummy from './components/dummy';
 import registerServiceWorker from './registerServiceWorker';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -15,7 +16,7 @@ const store = createStore(
 
 render(
   <Provider store={store}>
-    <App />
+    <Dummy />
   </Provider>,
   document.getElementById('root')
 )
