@@ -8,10 +8,22 @@
 
 .parking-message-container{
     background-color: lightgrey;
-    color: saddlebrown;
     overflow: scroll;
     overflow-x: hidden;
     position: fixed;
     height: 100%;
     width: 50%;
+}
+
+.carStatusMessage-red{
+    color: darkred;
+}
+.carStatusMessage-green{
+    color: darkgreen;
+}
+.carStatusMessage-blue{
+    color: darkblue;
+}
+.carStatusMessage-black{
+    color: black;
 }

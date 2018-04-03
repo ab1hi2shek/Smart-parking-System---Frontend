@@ -73,7 +73,10 @@ const parkings = (state = {}, action) => {
             carLocationShown: true,
             currCarPosition: action.payload.currCarPosition,
             carStatusMessage: [
-                "Car " + action.payload.carNumber + " wants to be parked.",
+                {
+                    message: "Car " + action.payload.carNumber + " wants to be parked.",
+                    color: 'blue'
+                },
                 ...state.carStatusMessage
             ]
         };
@@ -83,6 +86,7 @@ const parkings = (state = {}, action) => {
         let currIndex = parkingToBook.index;
         let currArray = state.parking2DArray;
         let currCarNumber = action.payload.carNumber;
+        let parkingDistance = (action.payload.parkingDistance * 2).toFixed(2);
 
         for(let i=0; i<currArray[currIndex].length; i++){
             if(currArray[currIndex][i] === 0){
@@ -91,7 +95,11 @@ const parkings = (state = {}, action) => {
                     ...state,
                     parking2DArray: currArray,
                     carStatusMessage: [
-                        "Car " + currCarNumber + " has been parked to " + parkingToBook.name + ".",
+                        {
+                            message: "Car " + currCarNumber + " has been parked to " + parkingToBook.name + " after " +
+                            parkingDistance + ' secs.',
+                            color: 'green'
+                        },
                         ...state.carStatusMessage
                     ]
                 }
@@ -100,7 +108,10 @@ const parkings = (state = {}, action) => {
         return {
             ...state,
             carStatusMessage: [
-                "Car " + currCarNumber + " cannot be parked: No available space in " + parkingToBook.name + ".",
+                {
+                    message: "Car " + currCarNumber + " cannot be parked: No available space in " + parkingToBook.name + ".",
+                    color: 'red'
+                },
                 ...state.carStatusMessage
             ]
         };
@@ -124,7 +135,10 @@ const parkings = (state = {}, action) => {
             return{
                 ...state,
                 carStatusMessage: [
-                    "Car " + action.meta.carNumber + " is assigned to parking " + action.meta.parkingPlace.name + ".",
+                    {
+                        message: "Car " + action.meta.carNumber + " is assigned to parking " + action.meta.parkingPlace.name + ".",
+                        color: 'black'
+                    },
                     ...state.carStatusMessage
                 ]
             };
@@ -132,6 +146,7 @@ const parkings = (state = {}, action) => {
         case ActionTypes.START_SIMULATION:
             return{
                 ...state,
+                carStatusMessage: [],
                 simulation: true
             };
 

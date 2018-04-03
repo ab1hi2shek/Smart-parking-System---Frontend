@@ -61,7 +61,7 @@ class SimulatorArea extends Component {
 
     render() {
         let carStatusMessageUtil = this.props.carStatusMessage.map(item => {
-           return <li>{item}</li>
+            return <li className={'carStatusMessage-' + item.color}>{item.message}</li>
         });
 
         return (
@@ -111,9 +111,8 @@ class SimulatorArea extends Component {
                     <hr />
 
                     <div className="row parking-message-container">
-                        <div className="col-md-8 offset-2">
+                        <div className="col-md-10 offset-1">
                             {carStatusMessageUtil}
-
                         </div>
                     </div>
                 </div>
@@ -123,7 +122,6 @@ class SimulatorArea extends Component {
 }
 
 function mapDispatchToProps(dispatch){
-
     return{
         handleFetchParkings: function(params) {
             dispatch(handleFetchParkings(params));

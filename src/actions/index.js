@@ -161,7 +161,7 @@ export function handleAllAboutParking(params){
          */
         dispatch(handleParkingAssignedMessage({
             parkingPlace: parkingDetails.parkingPlace,
-            carNumber: params.carNumber
+            carNumber: params.carNumber,
         }));
         /* to dispatch an action after d seconds i.e. when car will reach the parking place after travelling
         for d kms.
@@ -169,7 +169,8 @@ export function handleAllAboutParking(params){
         setTimeout(() => {
             dispatch(handleBookParking({
                 parking: parkingDetails.parkingPlace,
-                carNumber: params.carNumber
+                carNumber: params.carNumber,
+                parkingDistance: parkingDetails.parkingDistance
             }))
         }, parkingDetails.parkingDistance * 2000)
     }
@@ -214,7 +215,8 @@ export function handleBookParking(params){
         type: ActionTypes.BOOK_PARKING,
         payload: {
             parking: params.parking,
-            carNumber: params.carNumber
+            carNumber: params.carNumber,
+            parkingDistance: params.parkingDistance
         },
         meta: params
     }
