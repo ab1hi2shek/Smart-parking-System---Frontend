@@ -1,9 +1,17 @@
 import * as ActionTypes from '../consts/actionTypes';
 import { decreaseOneSecond } from '../consts/externalFunctions';
+import { PARKING_TIME } from "../consts/otherConstants";
+
+/**
+ * reducer function
+ * @param state
+ * @param action
+ * @returns {*}
+ */
 const parkings = (state = {}, action) => {
 
 	switch (action.type) {
-    
+
     case ActionTypes.LOG_IN_USER_SUCCESS:
     	return {
             message: "login successful",
@@ -51,22 +59,6 @@ const parkings = (state = {}, action) => {
             carStatusMessage: []
         };
 
-    case ActionTypes.SHORTEST_DIST_PARKING:
-    	return {
-            ...state,
-            messgae: "parking fetched on the basis of distance",
-            shortestDistParking: action.payload.shortestDistParking,
-            shortestDist: action.payload.shortestDist
-        };
-
-    case ActionTypes.OPTIMAL_PARKING:
-    	return {
-            ...state,
-            message: "parking fetched on the basis of optimal algorithm",
-            optimalParking: action.payload.optimalParking,
-            optimalParkingCost: action.payload.optimalParkingCost
-        };
-
     case ActionTypes.LOG_OUT_USER:
         return {
             message: "log out successful",
@@ -75,19 +67,42 @@ const parkings = (state = {}, action) => {
             simulation: false
         };
 
-        case ActionTypes.SHOW_CURRENT_CAR:
+    case ActionTypes.SHOW_CURRENT_CAR:
         return {
             ...state,
             carLocationShown: true,
             currCarPosition: action.payload.currCarPosition,
-            carStatusMessage: [...state.carStatusMessage,
-                "Car " + action.meta.carNumber + " wants to be parked."
-                ]
+            carStatusMessage: [
+                "Car " + action.payload.carNumber + " wants to be parked.",
+                ...state.carStatusMessage
+            ]
         };
 
     case ActionTypes.BOOK_PARKING:
+        let parkingToBook = action.payload.parking;
+        let currIndex = parkingToBook.index;
+        let currArray = state.parking2DArray;
+        let currCarNumber = action.payload.carNumber;
+
+        for(let i=0; i<currArray[currIndex].length; i++){
+            if(currArray[currIndex][i] === 0){
+                currArray[currIndex][i] = PARKING_TIME;
+                return{
+                    ...state,
+                    parking2DArray: currArray,
+                    carStatusMessage: [
+                        "Car " + currCarNumber + " has been parked to " + parkingToBook.name + ".",
+                        ...state.carStatusMessage
+                    ]
+                }
+            }
+        }
         return {
-            ...state
+            ...state,
+            carStatusMessage: [
+                "Car " + currCarNumber + " cannot be parked: No available space in " + parkingToBook.name + ".",
+                ...state.carStatusMessage
+            ]
         };
 
     case ActionTypes.SHOW_LOADING_BAR:
@@ -96,14 +111,24 @@ const parkings = (state = {}, action) => {
             isLoading: true
         };
 
-        case ActionTypes.BACKGROUND_ACTION:
-            let currParking2DArray = state.parking2DArray;
-            currParking2DArray = decreaseOneSecond(currParking2DArray);
+    case ActionTypes.BACKGROUND_ACTION:
+        let currParking2DArray = state.parking2DArray;
+        currParking2DArray = decreaseOneSecond(currParking2DArray);
 
-            return {
+        return {
+            ...state,
+            parking2DArray: currParking2DArray
+        };
+
+        case ActionTypes.PARKING_ASSIGNED_MESSAGE:
+            return{
                 ...state,
-                parking2DArray: currParking2DArray
+                carStatusMessage: [
+                    "Car " + action.meta.carNumber + " is assigned to parking " + action.meta.parkingPlace.name + ".",
+                    ...state.carStatusMessage
+                ]
             };
+
         case ActionTypes.START_SIMULATION:
             return{
                 ...state,

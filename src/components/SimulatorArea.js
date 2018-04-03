@@ -4,10 +4,8 @@ import ParkingMap from './ParkingMap';
 import * as Constants from '../consts/otherConstants';
 import './index.css';
 import {
-    handleFetchParkings,
-    handleLoadingBar,
-    handleShowCurrentCarToMap,
-    handleBackgroundAction,
+    handleFetchParkings, handleAllAboutParkingUtil,
+    handleLoadingBar, handleBackgroundAction,
     handleStopSimulation, handleStartSimulation
 } from "../actions";
 
@@ -26,8 +24,8 @@ class SimulatorArea extends Component {
         e.preventDefault();
         this.props.handleStartSimulation();
 
-        const twoMinutes = 1000 * 121;
-        const timeout = new Date()*1 + twoMinutes;
+        const timeToRun = 1000 * Constants.SIMULATION_TIME;
+        const timeout = new Date()*1 + timeToRun;
         let currTimeElapsed = 0;
 
         let secCounterTimerID = setInterval(() => {
@@ -36,7 +34,7 @@ class SimulatorArea extends Component {
             }
             else {
                 currTimeElapsed = currTimeElapsed + 1;
-                let currTimeRemaining = 120 - currTimeElapsed;
+                let currTimeRemaining = Constants.SIMULATION_TIME - currTimeElapsed;
                 this.setState({ timeToDisplay: currTimeRemaining + ' seconds remaining'});
                 this.props.handleBackgroundAction();
             }
@@ -50,7 +48,7 @@ class SimulatorArea extends Component {
                 this.setState({ disable: false})
             }
             else {
-                this.props.handleShowCurrentCarToMap({carNumber: carNumber});
+                this.props.handleAllAboutParkingUtil({carNumber: carNumber});
                 carNumber++;
             }
 
@@ -133,9 +131,6 @@ function mapDispatchToProps(dispatch){
         handleLoadingBar: function(params) {
             dispatch(handleLoadingBar(params));
         },
-        handleShowCurrentCarToMap: function(params){
-            dispatch(handleShowCurrentCarToMap(params));
-        },
         handleBackgroundAction: function (params) {
             dispatch(handleBackgroundAction(params))
         },
@@ -144,6 +139,9 @@ function mapDispatchToProps(dispatch){
         },
         handleStartSimulation: function (params) {
             dispatch(handleStartSimulation(params))
+        },
+        handleAllAboutParkingUtil: function (params) {
+            dispatch(handleAllAboutParkingUtil(params))
         }
 
     }
