@@ -53,7 +53,7 @@ class SimulatorArea extends Component {
                 carNumber++;
             }
 
-        }, 5000)
+        }, 500)
     };
 
     componentDidMount(){
@@ -67,14 +67,14 @@ class SimulatorArea extends Component {
 
         return (
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6 map-container">
                     <ParkingMap
                         markers = {this.props.parkings}
                         isMarkerShown
                         googleMapURL= { Constants.GOOGLE_MAP_URL}
                         async defer
                         loadingElement={<div style={{ height: `100%` }} />}
-                        containerElement={<div style={{ height: `550px` }} />}
+                        containerElement={<div style={{ height: `580px` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
                         zoom = { Constants.ZOOM }
                         defaultCenter = { Constants.DEFAULT_CENTER }
@@ -109,7 +109,6 @@ class SimulatorArea extends Component {
                     </div>
 
                     <br />
-                    <hr />
 
                     <div className="row parking-message-container">
                         <div className="col-md-10 offset-1">

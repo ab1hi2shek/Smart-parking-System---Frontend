@@ -70,10 +70,7 @@ class App extends Component {
                 show={this.props.isLoading}
                 color="red"
             />
-
             <br/>
-            <br/>
-
             {this.props.login && <SimulatorArea/>}
             {!this.props.login && !this.state.signUp && <SignUpPage/>}
             {!this.props.login && this.state.signUp && <LoginPage/>}

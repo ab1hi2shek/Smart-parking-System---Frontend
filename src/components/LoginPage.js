@@ -1,9 +1,16 @@
+/**
+ * created by ABHISHEK KUMAR
+ * Date - 01 Apr 2018
+ */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { handleLogin, handleLoadingBar } from '../actions/index';
 import './index.css';
 
-class ParkingsList extends Component {
+/**
+ * class login page to handle login page.
+ */
+class LoginPage extends Component {
 
     state = {
         email: "",
@@ -11,18 +18,30 @@ class ParkingsList extends Component {
         message: ""
     };
 
+    /**
+     * to handle email input
+     * @param e
+     */
     handleEmail = (e) => {
         this.setState({
             email: e.target.value
         })
     };
 
+    /**
+     * to handle password input
+     * @param e
+     */
     handlePassword = (e) => {
         this.setState({
             password: e.target.value
         })
     };
 
+    /**
+     * to handle submit button click
+     * @param e
+     */
     handleSubmit = (e) => {
         e.preventDefault();
         if(this.state.email === ""){
@@ -95,7 +114,10 @@ class ParkingsList extends Component {
     }
 }
 
-
+/**
+ * @param dispatch
+ * @returns {{handleLogin: handleLogin, handleLoadingBar: handleLoadingBar}}
+ */
 function mapDispatchToProps(dispatch){
 
     return{
@@ -108,10 +130,14 @@ function mapDispatchToProps(dispatch){
     }
 }
 
+/**
+ * @param state
+ * @returns {{message: null}}
+ */
 function mapStateToProps(state){
     return {
         message: state.message === undefined ? null : state.message
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ParkingsList);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

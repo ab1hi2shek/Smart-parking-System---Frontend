@@ -1,3 +1,4 @@
+/* general flash message container */
 .message-red{
     color: red;
 }
@@ -6,15 +7,20 @@
     color: blue;
 }
 
+/* parking message container css */
 .parking-message-container{
     background-color: lightgrey;
-    overflow: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
-    position: fixed;
-    height: 100%;
-    width: 50%;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    position: inherit;
+    height: auto;
+    max-height: 500px;
+    width: auto;
 }
 
+/* parking message colors */
 .carStatusMessage-red{
     color: darkred;
 }
