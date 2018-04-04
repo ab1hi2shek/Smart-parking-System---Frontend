@@ -35,7 +35,7 @@ class SimulatorArea extends Component {
             }
             else {
                 currTimeElapsed = currTimeElapsed + 1;
-                let currTimeRemaining = Constants.SIMULATION_TIME - currTimeElapsed;
+                let currTimeRemaining = Constants.SIMULATION_TIME - currTimeElapsed - 1;
                 this.setState({ timeToDisplay: currTimeRemaining + ' seconds remaining'});
                 this.props.handleBackgroundAction();
             }
@@ -53,7 +53,7 @@ class SimulatorArea extends Component {
                 carNumber++;
             }
 
-        }, 500)
+        }, 5000)
     };
 
     componentDidMount(){

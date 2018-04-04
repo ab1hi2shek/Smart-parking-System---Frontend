@@ -9,7 +9,7 @@
 
 /* parking message container css */
 .parking-message-container{
-    background-color: lightgrey;
+    background-color: #d3d3d32e;
     overflow-y: auto;
     overflow-x: hidden;
     margin-right: 10px;
@@ -22,14 +22,17 @@
 
 /* parking message colors */
 .carStatusMessage-red{
-    color: darkred;
+    color: red;
 }
 .carStatusMessage-green{
-    color: darkgreen;
+    color: green;
 }
 .carStatusMessage-blue{
-    color: darkblue;
+    color: blue;
 }
 .carStatusMessage-black{
     color: black;
+}
+.carStatusMessage-gold{
+    color: #b9036d;
 }

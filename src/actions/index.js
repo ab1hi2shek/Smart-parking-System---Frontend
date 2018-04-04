@@ -160,14 +160,14 @@ export function handleAllAboutParking(params){
          * to dispatch an action to show message that which car has been parked where
          */
         dispatch(handleParkingAssignedMessage({
-            parkingPlace: parkingDetails.parkingPlace,
-            carNumber: params.carNumber,
+            message: "Car " + params.carNumber + " is assigned to parking " + parkingDetails.parkingPlace.name + ".",
+            color: 'black'
         }));
         /* to dispatch an action after d seconds i.e. when car will reach the parking place after travelling
         for d kms.
         */
         setTimeout(() => {
-            dispatch(handleBookParking({
+            dispatch(handleBookParkingUtil({
                 parking: parkingDetails.parkingPlace,
                 carNumber: params.carNumber,
                 parkingDistance: parkingDetails.parkingDistance
@@ -206,6 +206,139 @@ export function handleShowCurrentCarToMap(params){
 }
 
 /**
+ * Util action creator to get state and book or go to neighbours on basis of state.
+ * @param params
+ * @returns {Function}
+ */
+export function handleBookParkingUtil(params){
+    return (dispatch, getState) => {
+        let currArray = getState().parking2DArray;  //getting 2D array from state to check conditions
+        let currParking = params.parking;   //parking which is assigned.
+        let currIndex = currParking.index;  //index number of assigned parking
+        /**
+         * checking if parking slot is available in assigned parking or not.
+         */
+        let assignedParkingAvailable = false;   //bool variable
+        for(let i=0; i<currArray[currIndex].length; i++){
+            if(currArray[currIndex][i] === 0){
+                assignedParkingAvailable = true;
+                /**
+                 * dispatching action when the parking place is available: this means parking slot is available.
+                 */
+                dispatch(handleBookParking({
+                    rowNumber: currIndex,
+                    columnNumber: i
+                }));
+                /**
+                 * dispatch action to print message that parking is booked.
+                 */
+                let parkingTime = (params.parkingDistance * 2).toFixed(2);
+                dispatch(handleParkingAssignedMessage({
+                    message: "Car " + params.carNumber + " has been parked to " + currParking.name + " after " +
+                        parkingTime + ' secs.',
+                    color: 'green'
+                }));
+                break;
+            }
+        }
+        /**
+         * if parking is not found in assigned parking. this false indicates the same.
+         */
+        if(assignedParkingAvailable === false) {
+            /**
+             * If the process reaches here, that means parking is not available where it has been directed
+             * in the first stage. We will try to accommodate it to it's first neighbour.
+             */
+            let neighbours = currParking.neighbours_Ids;    //array of neighbours of assigned parking
+            /**
+             * checking all the neighbours and finding neighbour with minimum cost.
+             */
+            let minCost = 99999999; //to find minimum cost among all neighbours
+            let minCostParking = {}; //this variable holds minimum cost parking, it is an object.
+            let minCostDist = 0;    //to find distance between assigned parking and assigned neighbour
+            //defaultParking is the array of objects. It contains all parking objects as an array.
+            defaultParking.forEach(parking => {
+                //checking if parking is in neighbour's list
+                if (neighbours.indexOf(parking._id) > -1) {
+                    //Code reached here means curr parking is in neighbour's list
+                    let currParams = {
+                        carIndex: parking.index,
+                        currParking2DArray: currArray
+                    };
+                    /**
+                     * this function find cost between two positions, it takes 5 parameters.
+                     * @type {{curr_cost: number|*, curr_dist: number}}
+                     */
+                    let result = findCostBetweenTwoPositions(
+                        currParking.lattitude,
+                        currParking.longitude,
+                        parking.lattitude,
+                        parking.longitude,
+                        currParams
+                    );
+                    /**
+                     * if this has the minimum cost, we will update our parking where car should be redirected.
+                     */
+                    if (result.curr_cost < minCost) {
+                        minCost = result.curr_cost;
+                        minCostParking = parking;
+                        minCostDist = result.curr_dist;
+                    }
+                }
+            });
+            /**
+             * checking if the neighbour assigned parking has available space or not.
+             * If available - we will book parking.
+             * If not available - we will print that car cannot be parked
+             */
+            let assignedNeighbourParking = false;
+            for (let i = 0; i < currArray[minCostParking.index].length; i++) {
+                if (currArray[minCostParking.index][i] === 0) {
+                    assignedNeighbourParking = true;
+                    /**
+                     * dispatching action when the parking place is available
+                     */
+                    dispatch(handleBookParking({
+                        rowNumber: minCostParking.index,
+                        columnNumber: i
+                    }));
+                    /**
+                     * dispatch action to print message that parking is booked.
+                     */
+                    /**
+                     * Note that toFixed() return string, hence totalParkingTime cannot be done like
+                     * totalParkingTime =  parkingTime + addOnParkingTime || this will add as strings, hence wrong
+                     * @type {string}
+                     */
+                    let parkingTime = (params.parkingDistance * 2).toFixed(2);
+                    let addOnParkingTime = (minCostDist * 2).toFixed(2);
+                    let totalParkingTime = ((params.parkingDistance + minCostDist) * 2).toFixed(2);
+                    dispatch(handleParkingAssignedMessage({
+                        message: "Car " + params.carNumber + " has been redirected to " + minCostParking.name  + " from " +
+                            currParking.name + " and parked after " + totalParkingTime + ' (' + parkingTime + ', ' +
+                            addOnParkingTime + ') secs.',
+                        color: 'gold'
+                    }));
+                    break;
+                }
+            }
+
+            /**
+             * Parking failed even in the neighbours and hence we will mark this parking as failed.
+             * dispatch message that parking has been failed
+             */
+            if(assignedNeighbourParking === false) {
+                dispatch(handleParkingAssignedMessage({
+                    message: "Car " + params.carNumber + " cannot be parked: No available space in " + currParking.name +
+                    " and its assigned neighbour " + minCostParking.name + '.' ,
+                    color: 'red'
+                }));
+            }
+        }
+    }
+}
+
+/**
  * Action creator to book a parking i.e. add 10 secs to specific parking slot.
  * @param params
  * @returns {{type: string, payload: {parkingPlace, parkingDistance: number, parkingCost: number}|*, meta: *}}
@@ -214,13 +347,13 @@ export function handleBookParking(params){
     return{
         type: ActionTypes.BOOK_PARKING,
         payload: {
-            parking: params.parking,
-            carNumber: params.carNumber,
-            parkingDistance: params.parkingDistance
+            rowNumber: params.rowNumber,
+            columnNumber: params.columnNumber
         },
         meta: params
     }
 }
+
 //****************************************************************************************************
 
 /**
@@ -324,9 +457,8 @@ function generateRandomPosition(){
  * @param params
  * @returns {{parkingPlace, parkingDistance: number, parkingCost: number}}
  */
+
 function findOptimalParking(params){
-    let max_parking_space = MAX_PARKING_SPACE;
-    let max_distance = MAX_DISTANCE;
     let parkingCost = 9999999999;
     let parkingPlace = {};
     let parkingDistance = 0;
@@ -334,24 +466,21 @@ function findOptimalParking(params){
         /**
          * to get distance between two coordinates
          */
-        let currDist = getDistance(params.currCarPosition.lattitude, params.currCarPosition.longitude,
-            item.lattitude, item.longitude);
-        /**
-         * to find the number of unavailable parking slots for current parking place.
-         */
-        let filled_parking_space = findFilledParkingSpace({
+        let currParams = {
             carIndex: item.index,
             currParking2DArray: params.currParking2DArray
-        });
-
-        let distRatio = currDist/max_distance;
-        let spaceRatio = filled_parking_space/max_parking_space;
-        let curr_cost = 0.2 * distRatio + 0.8 * spaceRatio;
-
-        if(curr_cost < parkingCost){
-            parkingCost = curr_cost;
+        };
+        let result = findCostBetweenTwoPositions(
+            params.currCarPosition.lattitude,
+            params.currCarPosition.longitude,
+            item.lattitude,
+            item.longitude,
+            currParams
+        );
+        if(result.curr_cost < parkingCost){
+            parkingCost = result.curr_cost;
             parkingPlace = item;
-            parkingDistance = currDist;
+            parkingDistance = result.curr_dist;
         }
     });
     return {
@@ -359,6 +488,38 @@ function findOptimalParking(params){
         parkingDistance: parkingDistance,
         parkingCost: parkingCost
     }
+}
+
+/**
+ * to find cost and distance between two positions
+ * @param lat1
+ * @param lng1
+ * @param lat2
+ * @param lng2
+ * @param params
+ * @returns {{curr_cost: number|*, curr_dist: number}}
+ */
+function findCostBetweenTwoPositions(lat1, lng1, lat2, lng2, params){
+    let curr_cost;
+    /**
+     * to get distance between two coordinates
+     */
+    let currDist = getDistance(lat1, lng1, lat2, lng2);
+    /**
+     * to find the number of unavailable parking slots for current destination parking place.
+     */
+    let filled_parking_space = findFilledParkingSpace({
+        carIndex: params.carIndex,
+        currParking2DArray: params.currParking2DArray
+    });
+
+    let distRatio = currDist / MAX_DISTANCE;
+    let spaceRatio = filled_parking_space / MAX_PARKING_SPACE;
+    curr_cost = 0.2 * distRatio + 0.8 * spaceRatio;
+    return {
+        curr_cost: curr_cost,
+        curr_dist: currDist
+    };   //return cost between two parking
 }
 
 /**
