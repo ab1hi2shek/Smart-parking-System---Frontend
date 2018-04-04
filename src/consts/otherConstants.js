@@ -6,4 +6,4 @@ export const GOOGLE_MAP_URL = "https://maps.googleapis.com/maps/api/js?key=AIzaS
 export const MAX_PARKING_SPACE =  4; //parking slots
 export const MAX_DISTANCE =  6.652102562117762; //in km
 export const PARKING_TIME = 90; //in secs
-export const SIMULATION_TIME = 11; //in secs
+export const SIMULATION_TIME = 181; //in secs
