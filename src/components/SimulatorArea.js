@@ -31,11 +31,12 @@ class SimulatorArea extends Component {
         let secCounterTimerID = setInterval(() => {
             if(new Date() > timeout || !this.props.simulation){
                 clearInterval(secCounterTimerID);
+                this.setState({ timeToDisplay: 'Simulation time over'});
                 this.props.handleStopSimulation();
             }
             else {
                 currTimeElapsed = currTimeElapsed + 1;
-                let currTimeRemaining = Constants.SIMULATION_TIME - currTimeElapsed - 1;
+                let currTimeRemaining = Constants.SIMULATION_TIME - currTimeElapsed;
                 this.setState({ timeToDisplay: currTimeRemaining + ' seconds remaining'});
                 this.props.handleBackgroundAction();
             }
