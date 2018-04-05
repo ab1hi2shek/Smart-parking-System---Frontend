@@ -210,7 +210,7 @@ export function handleAllAboutParking(params){
         dispatch(handleShortestParkingMessage({
             message: "Car " + params.carNumber + " will be parked at " + assignedShortPark.name +
                 " after " + waitingTime + ' secs.',
-            color: shortDistTravelled * 2 + temp >  90 ? 'red' : 'green'
+            color: shortDistTravelled * 2 + temp >  75 ? 'red' : 'green'
         }));
         /**
          * save data to generate csv file
@@ -433,7 +433,7 @@ export function handleBookParkingUtil(params){
             parkedAt:parkedAt,
             timeOnRoad: timeOnRoad,
             distanceTravelled: distanceTravelled.toFixed(2),
-            waitingTime: tempParked === "YES" ? timeOnRoad : timeOnRoad + 90
+            waitingTime: tempParked === "YES" ? timeOnRoad : (distanceTravelled + 10).toFixed(2)
         }));
     }
 }

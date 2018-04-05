@@ -6,7 +6,7 @@ export const defaultParking = [
 		"name":"Prantika",
 		"lattitude":"23.565945",
 		"longitude":"87.289656",
-		"parkingSpace":4
+		"parkingSpace":3
 	},
 
 	{
@@ -56,7 +56,7 @@ export const defaultParking = [
 		"name":"Kalipur",
 		"lattitude":"23.507065",
 		"longitude":"87.301201",
-        "parkingSpace":2
+        "parkingSpace":3
 	},
 
 	{
