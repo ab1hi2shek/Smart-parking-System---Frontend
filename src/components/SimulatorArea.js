@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import { CSVLink } from 'react-csv';
 
 import ParkingMap from './ParkingMap';
 import * as Constants from '../consts/otherConstants';
@@ -9,27 +8,8 @@ import {
     handleFetchParkings, handleAllAboutParkingUtil,
     handleLoadingBar, handleBackgroundAction,
     handleStopSimulation, handleStartSimulation,
+    handleHideMapFromPage
 } from "../actions";
-
-let headers = [
-    {label: 'Car Name', key: 'carName'},
-    {label: 'Is Parked?', key: 'parked'},
-    {label: 'Arrival Time', key: 'arrivalTime'},
-    {label: 'Parking Assigned', key: 'parkingAssigned'},
-    {label: 'Parked At?', key: 'parkedAt'},
-    {label: 'Driving Time(Sec)', key: 'timeOnRoad'},
-    {label: 'Driving Distance(Km)', key: 'distanceTravelled'},
-    {label: 'Waiting Time(Sec)', key: 'waitingTime'}
-];
-
-let shortestHeaders = [
-    {label: 'Car Name', key: 'carName'},
-    {label: 'Arrival Time', key: 'arrivalTime'},
-    {label: 'Parking Assigned', key: 'parkingAssigned'},
-    {label: 'Driving Time(Sec)', key: 'timeOnRoad'},
-    {label: 'Driving Distance(Km)', key: 'distanceTravelled'},
-    {label: 'Waiting Time(Sec)', key: 'waitingTime'}
-];
 
 class SimulatorArea extends Component {
 
@@ -41,12 +21,14 @@ class SimulatorArea extends Component {
     handleSimulationStop = (e) => {
         e.preventDefault();
         this.props.handleStopSimulation();
+        this.props.handleHideMapFromPage();
     };
 
     handleSimulationStart = (e) => {
         e.preventDefault();
         this.setState({isStartSimulationButtonClicked: true});
         this.props.handleStartSimulation();
+        clearInterval(this.interval);
 
         const timeToRun = 1000 * Constants.SIMULATION_TIME;
         const timeout = new Date()*1 + timeToRun;
@@ -74,7 +56,7 @@ class SimulatorArea extends Component {
                     this.setState({ disable: false});
                     this.setState({ timeToDisplay: 'Simulation time over'});
                     this.props.handleStopSimulation();
-                    console.log(this.props.carParkingData);
+                    this.props.handleHideMapFromPage();
                 }, 12000);
             }
             else {
@@ -122,44 +104,22 @@ class SimulatorArea extends Component {
                     <div className="row">
                         <div className="col-md-8">
                             {!this.props.simulation &&
-                                <button
-                                    className="btn btn-success mr-sm-2"
-                                    disabled={this.state.simulation}
-                                    onClick={this.handleSimulationStart}
-                                >
-                                    Start Simulation
-                                </button>
-                            }
-                            {!this.props.simulation && this.state.isStartSimulationButtonClicked &&
-                                <div>
-                                    <CSVLink
-                                        data={this.props.carParkingData}
-                                        headers={headers}
-                                        filename={"optimal-algo-parking-data.csv"}
-                                        className="btn btn-success mr-sm-2"
-                                        target="_blank"
-                                    >
-                                        Download Data 1
-                                    </CSVLink>
-                                    <CSVLink
-                                        data={this.props.shortestParkingData}
-                                        headers={shortestHeaders}
-                                        filename={"shortest-dist-parking-data.csv"}
-                                        className="btn btn-success mr-sm-2"
-                                        target="_blank"
-                                    >
-                                        Download Data 2
-                                    </CSVLink>
-                                </div>
+                            <button
+                                className="btn btn-success mr-sm-2"
+                                disabled={this.state.simulation}
+                                onClick={this.handleSimulationStart}
+                            >
+                                Start Simulation
+                            </button>
                             }
                             {this.props.simulation &&
-                                <button
-                                    className="btn btn-success mr-sm-2"
-                                    disabled={this.state.simulation}
-                                    onClick={this.handleSimulationStop}
-                                >
-                                    Stop Simulation
-                                </button>
+                            <button
+                                className="btn btn-success mr-sm-2"
+                                disabled={this.state.simulation}
+                                onClick={this.handleSimulationStop}
+                            >
+                                Stop Simulation
+                            </button>
                             }
                         </div>
                         <div className="col-md-4">
@@ -207,8 +167,10 @@ function mapDispatchToProps(dispatch){
         },
         handleAllAboutParkingUtil: function (params) {
             dispatch(handleAllAboutParkingUtil(params))
+        },
+        handleHideMapFromPage: function (params) {
+            dispatch(handleHideMapFromPage(params))
         }
-
     }
 }
 
@@ -219,9 +181,7 @@ function mapStateToProps(state){
         message: state.message === undefined ? null : state.message,
         simulation: state.simulation === undefined ? false : state.simulation,
         carStatusMessage: state.carStatusMessage === undefined ? [] : state.carStatusMessage,
-        shortestCarStatusMessage: state.shortestCarStatusMessage === undefined ? [] : state.shortestCarStatusMessage,
-        carParkingData: state.carParkingData === undefined ? [] : state.carParkingData,
-        shortestParkingData: state.shortestParkingData === undefined ? [] : state.shortestParkingData
+        shortestCarStatusMessage: state.shortestCarStatusMessage === undefined ? [] : state.shortestCarStatusMessage
     }
 }
 

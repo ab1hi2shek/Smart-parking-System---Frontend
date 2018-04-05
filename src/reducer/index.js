@@ -162,6 +162,8 @@ const parkings = (state = {}, action) => {
                 carStatusMessage: [],
                 carParkingData: [],
                 shortestParkingData: [],
+                optimalTotalWaitingTime: 0,
+                shortestTotalWaitingTime: 0,
                 simulation: true
             };
         }
@@ -176,6 +178,7 @@ const parkings = (state = {}, action) => {
         case ActionTypes.SAVE_CAR_DATA: {
             return {
                 ...state,
+                optimalTotalWaitingTime: state.optimalTotalWaitingTime + parseFloat(action.payload.waitingTime),
                 carParkingData: [
                     ...state.carParkingData,
                     {
@@ -193,8 +196,11 @@ const parkings = (state = {}, action) => {
         }
 
         case ActionTypes.SAVE_SHORTEST_DATA: {
+            let currData = state.shortestTotalWaitingTime;
+            currData = currData + parseFloat(action.payload.waitingTime);
             return {
                 ...state,
+                shortestTotalWaitingTime: currData,
                 shortestParkingData: [
                     ...state.shortestParkingData,
                     {

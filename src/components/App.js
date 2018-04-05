@@ -6,6 +6,7 @@ import 'react-loading-bar/dist/index.css'
 import SignUpPage from './SignUpPage';
 import LoginPage from './LoginPage';
 import SimulatorArea from './SimulatorArea';
+import SimulatorAreaAfter from './SimultorAreaAfter';
 import {handleLogout} from '../actions/index';
 
 class App extends Component {
@@ -71,7 +72,8 @@ class App extends Component {
                 color="red"
             />
             <br/>
-            {this.props.login && this.props.hideMap && <SimulatorArea/>}
+            {this.props.login && this.props.hideMap && <SimulatorAreaAfter/>}
+            {this.props.login && !this.props.hideMap && <SimulatorArea/>}
             {!this.props.login && !this.state.signUp && <SignUpPage/>}
             {!this.props.login && this.state.signUp && <LoginPage/>}
         </div>;

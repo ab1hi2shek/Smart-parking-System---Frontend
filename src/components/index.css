@@ -20,6 +20,19 @@
     width: auto;
 }
 
+.full-message-container{
+    background-color: #d3d3d32e;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    position: inherit;
+    height: auto;
+    max-height: 390px;
+    width: auto;
+    padding-left: 20px;
+}
+
 /* parking message colors */
 .carStatusMessage-red{
     color: red;
@@ -36,3 +49,4 @@
 .carStatusMessage-gold{
     color: #b9036d;
 }
+

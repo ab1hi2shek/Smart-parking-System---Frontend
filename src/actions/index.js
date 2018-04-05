@@ -210,7 +210,7 @@ export function handleAllAboutParking(params){
         dispatch(handleShortestParkingMessage({
             message: "Car " + params.carNumber + " will be parked at " + assignedShortPark.name +
                 " after " + waitingTime + ' secs.',
-            color: 'green'
+            color: shortDistTravelled * 2 + temp >  90 ? 'red' : 'green'
         }));
         /**
          * save data to generate csv file
