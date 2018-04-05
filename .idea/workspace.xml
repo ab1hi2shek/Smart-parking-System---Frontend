@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="57610808-0605-4d57-8e7d-daf3bf1dd7bb" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/SimulatorArea.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SimulatorArea.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/SimulatorAreaContainer.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/simultorAreaAfter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SimultorAreaAfter.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/SimultorAreaAfter.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SimultorAreaAfter.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/consts/otherConstants.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/consts/otherConstants.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reducer/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/reducer/index.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -37,7 +30,7 @@
         <entry file="file://$PROJECT_DIR$/src/consts/otherConstants.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="208">
-              <caret line="8" column="33" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="33" />
+              <caret line="8" column="45" lean-forward="true" selection-start-line="8" selection-start-column="45" selection-end-line="8" selection-end-column="45" />
             </state>
           </provider>
         </entry>
@@ -81,8 +74,8 @@
       <file leaf-file-name="SimultorAreaAfter.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/SimultorAreaAfter.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="112" column="96" selection-start-line="112" selection-start-column="96" selection-end-line="112" selection-end-column="96" />
+            <state relative-caret-position="52">
+              <caret line="102" column="95" lean-forward="true" selection-start-line="102" selection-start-column="95" selection-end-line="102" selection-end-column="95" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -154,8 +147,8 @@
         <option value="$PROJECT_DIR$/src/components/SimulatorArea.js" />
         <option value="$PROJECT_DIR$/src/actions/index.js" />
         <option value="$PROJECT_DIR$/src/reducer/index.js" />
-        <option value="$PROJECT_DIR$/src/consts/otherConstants.js" />
         <option value="$PROJECT_DIR$/src/components/index.css" />
+        <option value="$PROJECT_DIR$/src/consts/otherConstants.js" />
         <option value="$PROJECT_DIR$/src/components/SimultorAreaAfter.js" />
       </list>
     </option>
@@ -267,18 +260,18 @@
       <workItem from="1522666807459" duration="605000" />
       <workItem from="1522667477371" duration="949000" />
       <workItem from="1522669511981" duration="41907000" />
-      <workItem from="1522820348415" duration="43040000" />
+      <workItem from="1522820348415" duration="43606000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="86501000" />
+    <option name="totallyTimeSpent" value="87067000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-1" width="1366" height="742" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" x="510" y="81" width="346" height="586" id="Project" order="0" visible="true" weight="0.13250366" />
+      <window_info content_ui="combo" x="510" y="81" width="346" height="586" id="Project" order="0" visible="true" weight="0.13250366" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
@@ -570,13 +563,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/consts/otherConstants.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="8" column="33" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/index.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
@@ -594,10 +580,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/consts/otherConstants.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="8" column="45" lean-forward="true" selection-start-line="8" selection-start-column="45" selection-end-line="8" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/SimultorAreaAfter.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="112" column="96" selection-start-line="112" selection-start-column="96" selection-end-line="112" selection-end-column="96" />
+        <state relative-caret-position="52">
+          <caret line="102" column="95" lean-forward="true" selection-start-line="102" selection-start-column="95" selection-end-line="102" selection-end-column="95" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>

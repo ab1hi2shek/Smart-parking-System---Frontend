@@ -100,7 +100,7 @@ class SimulatorAreaAfter extends Component {
                             {carStatusMessageUtil}
                         </div>
                         <hr />
-                        <h6><strong>Average waiting time: {avgOptimal.toFixed(2)} secs</strong>s</h6>
+                        <h6><strong>Average waiting time: {avgOptimal.toFixed(2)} secs</strong></h6>
                         <h6><strong>Percentage decrease: {percentage} %</strong></h6>
                     </div>
 
