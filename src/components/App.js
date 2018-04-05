@@ -71,7 +71,7 @@ class App extends Component {
                 color="red"
             />
             <br/>
-            {this.props.login && <SimulatorArea/>}
+            {this.props.login && this.props.hideMap && <SimulatorArea/>}
             {!this.props.login && !this.state.signUp && <SignUpPage/>}
             {!this.props.login && this.state.signUp && <LoginPage/>}
         </div>;
@@ -83,7 +83,8 @@ function mapStateToProps(state){
         isLoading: state.isLoading === undefined ? false : state.isLoading,
         login: state.login === undefined ? false : state.login,
         name: state.name === undefined ? "Guest" : state.name,
-        simulation: state.simulation === undefined ? false : state.simulation
+        simulation: state.simulation === undefined ? false : state.simulation,
+        hideMap: state.hideMap === undefined ? false : state.hideMap
     }
 }
 

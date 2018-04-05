@@ -4,7 +4,7 @@
  */
 import * as ActionTypes from '../consts/actionTypes';
 import axios from 'axios';
-import { URL, DEFAULT_CENTER, RADIUS, MAX_DISTANCE, MAX_PARKING_SPACE } from '../consts/otherConstants';
+import {URL, DEFAULT_CENTER, RADIUS, MAX_DISTANCE, MAX_PARKING_SPACE, PARKING_TIME} from '../consts/otherConstants';
 import { defaultParking } from '../consts/parkings';
 
 /**
@@ -107,6 +107,7 @@ export function handleFetchParkings(params){
      * @type {parkingDS}
      */
     let parking2DArray = createParkingDS(defaultParking);
+    let shortestParking2DArray = createParkingDS(defaultParking);
     /**
      * return the type, payload and meta data.
      */
@@ -115,6 +116,7 @@ export function handleFetchParkings(params){
         payload: {
             defaultParking: defaultParking,
             parking2DArray: parking2DArray,
+            shortestParking2DArray: shortestParking2DArray,
             simulation: false
         },
         meta: params
@@ -130,8 +132,11 @@ export function handleFetchParkings(params){
 export function handleAllAboutParkingUtil(params){
     return (dispatch, getState) => {
         let currParking2DArray = getState().parking2DArray;
+        let currShortestParking2DArray = getState().shortestParking2DArray;
         dispatch(handleAllAboutParking({
+            arrivalTime: params.arrivalTime,
             currParking2DArray: currParking2DArray,
+            currShortestParking2DArray: currShortestParking2DArray,
             carNumber: params.carNumber
         }));
     }
@@ -144,7 +149,7 @@ export function handleAllAboutParkingUtil(params){
 export function handleAllAboutParking(params){
     //to generate random longitude and lattitude
     let currCarPosition = generateRandomPosition();
-    //to find the optimal parking place for the current car
+    //to find the optimal parking place for the current car as well as shortest parking
     let parkingDetails = findOptimalParking({
         currCarPosition: currCarPosition,
         currParking2DArray: params.currParking2DArray
@@ -157,17 +162,73 @@ export function handleAllAboutParking(params){
             carNumber: params.carNumber
         }));
         /**
-         * to dispatch an action to show message that which car has been parked where
+         * to dispatch an action to show message that which car has been parked where on basis of optimal parking
          */
         dispatch(handleParkingAssignedMessage({
             message: "Car " + params.carNumber + " is assigned to parking " + parkingDetails.parkingPlace.name + ".",
             color: 'black'
+        }));
+        /**
+         * to dispatch an action to show message that which car has been parked where on basis of shortest parking
+         */
+        let assignedShortPark = parkingDetails.shortestParkingPlace;
+        dispatch(handleShortestParkingMessage({
+            message: "Car " + params.carNumber + " is assigned to parking " + assignedShortPark.name + ".",
+            color: 'black'
+        }));
+        /**
+         * to find the position where car can be accommodated in future on basis of shortest parking
+         * @type {number}
+         */
+        let minValue = 999999999;
+        let minIndex = 0;
+        let currShortestParking2DArray = params.currShortestParking2DArray;
+        for(let i=0; i<currShortestParking2DArray[assignedShortPark.index].length; i++){
+            let currValue = currShortestParking2DArray[assignedShortPark.index][i];
+            if(currValue < minValue){
+                minValue = currValue;
+                minIndex = i;
+            }
+        }
+        /**
+         * dispatching action for shortest distance to book
+         */
+        let shortDistTravelled = parkingDetails.shortestParkingDistance;
+        let shortTimeOnRoad = (shortDistTravelled * 2).toFixed(2);
+        let temp = minValue - Math.floor(shortDistTravelled * 2) > 0 ? minValue - Math.floor(shortDistTravelled * 2) : 0;
+        let total_time = temp + PARKING_TIME;
+        let waitingTime = (shortDistTravelled * 2 + temp).toFixed(2);
+        dispatch(handleBookParking({
+            rowNumber: assignedShortPark.index,
+            columnNumber: minIndex,
+            data: total_time,
+            meta: "shortest"
+        }));
+        /**
+         * to dispatch action to display message for shortest distance
+         */
+        dispatch(handleShortestParkingMessage({
+            message: "Car " + params.carNumber + " will be parked at " + assignedShortPark.name +
+                " after " + waitingTime + ' secs.',
+            color: 'green'
+        }));
+        /**
+         * save data to generate csv file
+         */
+        dispatch(handleSaveShortestData({
+            carName: "Car " + params.carNumber,
+            arrivalTime: params.arrivalTime,
+            parkingAssigned: assignedShortPark.name,
+            timeOnRoad: shortTimeOnRoad,
+            distanceTravelled: shortDistTravelled.toFixed(2),
+            waitingTime: waitingTime
         }));
         /* to dispatch an action after d seconds i.e. when car will reach the parking place after travelling
         for d kms.
         */
         setTimeout(() => {
             dispatch(handleBookParkingUtil({
+                arrivalTime: params.arrivalTime,
                 parking: parkingDetails.parkingPlace,
                 carNumber: params.carNumber,
                 parkingDistance: parkingDetails.parkingDistance
@@ -184,6 +245,19 @@ export function handleAllAboutParking(params){
 export function handleParkingAssignedMessage(params){
     return{
         type: ActionTypes.PARKING_ASSIGNED_MESSAGE,
+        payload: null,
+        meta: params
+    }
+}
+
+/**
+ * to display the message for shortest distance parking simulator
+ * @param params
+ * @returns {{type: *, payload: null, meta: *}}
+ */
+export function handleShortestParkingMessage(params){
+    return {
+        type: ActionTypes.SHORTEST_PARKING_MESSAGE,
         payload: null,
         meta: params
     }
@@ -215,6 +289,10 @@ export function handleBookParkingUtil(params){
         let currArray = getState().parking2DArray;  //getting 2D array from state to check conditions
         let currParking = params.parking;   //parking which is assigned.
         let currIndex = currParking.index;  //index number of assigned parking
+
+        let parkedAt;
+        let timeOnRoad;
+        let distanceTravelled;
         /**
          * checking if parking slot is available in assigned parking or not.
          */
@@ -227,7 +305,9 @@ export function handleBookParkingUtil(params){
                  */
                 dispatch(handleBookParking({
                     rowNumber: currIndex,
-                    columnNumber: i
+                    columnNumber: i,
+                    data: PARKING_TIME,
+                    meta: "optimal"
                 }));
                 /**
                  * dispatch action to print message that parking is booked.
@@ -238,12 +318,16 @@ export function handleBookParkingUtil(params){
                         parkingTime + ' secs.',
                     color: 'green'
                 }));
+                parkedAt =  currParking.name;
+                timeOnRoad = parkingTime;
+                distanceTravelled = params.parkingDistance;
                 break;
             }
         }
         /**
          * if parking is not found in assigned parking. this false indicates the same.
          */
+        let assignedNeighbourParking = false;
         if(assignedParkingAvailable === false) {
             /**
              * If the process reaches here, that means parking is not available where it has been directed
@@ -291,7 +375,8 @@ export function handleBookParkingUtil(params){
              * If available - we will book parking.
              * If not available - we will print that car cannot be parked
              */
-            let assignedNeighbourParking = false;
+            distanceTravelled = params.parkingDistance + minCostDist;
+            timeOnRoad = (distanceTravelled * 2).toFixed(2);
             for (let i = 0; i < currArray[minCostParking.index].length; i++) {
                 if (currArray[minCostParking.index][i] === 0) {
                     assignedNeighbourParking = true;
@@ -300,7 +385,9 @@ export function handleBookParkingUtil(params){
                      */
                     dispatch(handleBookParking({
                         rowNumber: minCostParking.index,
-                        columnNumber: i
+                        columnNumber: i,
+                        data: PARKING_TIME,
+                        meta: "optimal"
                     }));
                     /**
                      * dispatch action to print message that parking is booked.
@@ -319,6 +406,7 @@ export function handleBookParkingUtil(params){
                             addOnParkingTime + ') secs.',
                         color: 'gold'
                     }));
+                    parkedAt =  minCostParking.name;
                     break;
                 }
             }
@@ -333,8 +421,20 @@ export function handleBookParkingUtil(params){
                     " and its assigned neighbour " + minCostParking.name + '.' ,
                     color: 'red'
                 }));
+                parkedAt =  "None";
             }
         }
+        let tempParked = (assignedParkingAvailable === true || assignedNeighbourParking === true) ? "YES" : "NO";
+        dispatch(handleSaveCarData({
+            carName: "Car " + params.carNumber,
+            parked: tempParked,
+            arrivalTime: params.arrivalTime,
+            parkingAssigned: currParking.name,
+            parkedAt:parkedAt,
+            timeOnRoad: timeOnRoad,
+            distanceTravelled: distanceTravelled.toFixed(2),
+            waitingTime: tempParked === "YES" ? timeOnRoad : timeOnRoad + 90
+        }));
     }
 }
 
@@ -348,12 +448,50 @@ export function handleBookParking(params){
         type: ActionTypes.BOOK_PARKING,
         payload: {
             rowNumber: params.rowNumber,
-            columnNumber: params.columnNumber
+            columnNumber: params.columnNumber,
+            data: params.data,
+            meta: params.meta
         },
         meta: params
     }
 }
 
+/**
+ * this save the data of a car to state. Later used to generate csv file.
+ * @param params
+ * @returns {{type: string, payload: {carName: string|*, parked: string|*, arrivalTime: *, parkingAssigned: *, parkedAt: string, timeOnRoad: *, distanceTravelled: string | *}, meta: *}}
+ */
+export function handleSaveCarData(params){
+    return{
+        type: ActionTypes.SAVE_CAR_DATA,
+        payload: {
+            carName: params.carName,
+            parked: params.parked,
+            arrivalTime: params.arrivalTime,
+            parkingAssigned: params.parkingAssigned,
+            parkedAt:params.parkedAt,
+            timeOnRoad: params.timeOnRoad,
+            distanceTravelled: params.distanceTravelled,
+            waitingTime: params.waitingTime
+        },
+        meta: params
+    }
+}
+
+export function handleSaveShortestData(params){
+    return{
+        type: ActionTypes.SAVE_SHORTEST_DATA,
+        payload: {
+            carName: params.carName,
+            arrivalTime: params.arrivalTime,
+            parkingAssigned: params.parkingAssigned,
+            timeOnRoad: params.timeOnRoad,
+            distanceTravelled: params.distanceTravelled,
+            waitingTime: params.waitingTime
+        },
+        meta: params
+    }
+}
 //****************************************************************************************************
 
 /**
@@ -405,6 +543,32 @@ export function handleStartSimulation(params){
         type: ActionTypes.START_SIMULATION,
         payload: null,
         meta: params
+    }
+}
+
+/**
+ * to show map after simulation resumes
+ * @param params
+ * @returns {{type: *, payload: null, meta: *}}
+ */
+export function showMapToPage(params){
+    return{
+        type: ActionTypes.SHOW_MAP_TO_PAGE,
+        payload: null,
+        meta: params
+    }
+}
+
+/**
+ * to hide map from page
+ * @param params
+ * @returns {{type: string, payload: null, meta: *}}
+ */
+export function handleHideMapFromPage(params) {
+    return {
+        type: ActionTypes.HIDE_MAP_FROM_PAGE,
+        payload: null,
+        meta :params
     }
 }
 
@@ -462,6 +626,9 @@ function findOptimalParking(params){
     let parkingCost = 9999999999;
     let parkingPlace = {};
     let parkingDistance = 0;
+
+    let shortestParkingPlace = {};
+    let shortestParkingDistance = 999999999;
     defaultParking.forEach(function(item){
         /**
          * to get distance between two coordinates
@@ -482,11 +649,17 @@ function findOptimalParking(params){
             parkingPlace = item;
             parkingDistance = result.curr_dist;
         }
+        if(result.curr_dist < shortestParkingDistance){
+            shortestParkingDistance = result.curr_dist;
+            shortestParkingPlace = item;
+        }
     });
     return {
         parkingPlace: parkingPlace,
         parkingDistance: parkingDistance,
-        parkingCost: parkingCost
+        parkingCost: parkingCost,
+        shortestParkingPlace: shortestParkingPlace,
+        shortestParkingDistance: shortestParkingDistance
     }
 }
 
