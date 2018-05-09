@@ -377,39 +377,43 @@ export function handleBookParkingUtil(params){
              */
             distanceTravelled = params.parkingDistance + minCostDist;
             timeOnRoad = (distanceTravelled * 2).toFixed(2);
-            for (let i = 0; i < currArray[minCostParking.index].length; i++) {
-                if (currArray[minCostParking.index][i] === 0) {
-                    assignedNeighbourParking = true;
-                    /**
-                     * dispatching action when the parking place is available
-                     */
-                    dispatch(handleBookParking({
-                        rowNumber: minCostParking.index,
-                        columnNumber: i,
-                        data: PARKING_TIME,
-                        meta: "optimal"
-                    }));
-                    /**
-                     * dispatch action to print message that parking is booked.
-                     */
-                    /**
-                     * Note that toFixed() return string, hence totalParkingTime cannot be done like
-                     * totalParkingTime =  parkingTime + addOnParkingTime || this will add as strings, hence wrong
-                     * @type {string}
-                     */
-                    let parkingTime = (params.parkingDistance * 2).toFixed(2);
-                    let addOnParkingTime = (minCostDist * 2).toFixed(2);
-                    let totalParkingTime = ((params.parkingDistance + minCostDist) * 2).toFixed(2);
-                    dispatch(handleParkingAssignedMessage({
-                        message: "Car " + params.carNumber + " has been redirected to " + minCostParking.name  + " from " +
+
+            if(currArray[minCostParking.index] !== undefined) {
+                for (let i = 0; i < currArray[minCostParking.index].length; i++) {
+                    if (currArray[minCostParking.index][i] === 0) {
+                        assignedNeighbourParking = true;
+                        /**
+                         * dispatching action when the parking place is available
+                         */
+                        dispatch(handleBookParking({
+                            rowNumber: minCostParking.index,
+                            columnNumber: i,
+                            data: PARKING_TIME,
+                            meta: "optimal"
+                        }));
+                        /**
+                         * dispatch action to print message that parking is booked.
+                         */
+                        /**
+                         * Note that toFixed() return string, hence totalParkingTime cannot be done like
+                         * totalParkingTime =  parkingTime + addOnParkingTime || this will add as strings, hence wrong
+                         * @type {string}
+                         */
+                        let parkingTime = (params.parkingDistance * 2).toFixed(2);
+                        let addOnParkingTime = (minCostDist * 2).toFixed(2);
+                        let totalParkingTime = ((params.parkingDistance + minCostDist) * 2).toFixed(2);
+                        dispatch(handleParkingAssignedMessage({
+                            message: "Car " + params.carNumber + " has been redirected to " + minCostParking.name + " from " +
                             currParking.name + " and parked after " + totalParkingTime + ' (' + parkingTime + ', ' +
                             addOnParkingTime + ') secs.',
-                        color: 'gold'
-                    }));
-                    parkedAt =  minCostParking.name;
-                    break;
+                            color: 'gold'
+                        }));
+                        parkedAt = minCostParking.name;
+                        break;
+                    }
                 }
             }
+
 
             /**
              * Parking failed even in the neighbours and hence we will mark this parking as failed.
@@ -433,7 +437,7 @@ export function handleBookParkingUtil(params){
             parkedAt:parkedAt,
             timeOnRoad: timeOnRoad,
             distanceTravelled: distanceTravelled.toFixed(2),
-            waitingTime: tempParked === "YES" ? timeOnRoad : (distanceTravelled + 10).toFixed(2)
+            waitingTime: tempParked === "YES" ? timeOnRoad : (distanceTravelled + PARKING_TIME).toFixed(2)
         }));
     }
 }
@@ -633,10 +637,20 @@ function findOptimalParking(params){
         /**
          * to get distance between two coordinates
          */
+
+        if(item.index === undefined)
+        {
+            console.log(item);
+            console.log(defaultParking);
+        }
         let currParams = {
-            carIndex: item.index,
+            index: item.index,
             currParking2DArray: params.currParking2DArray
         };
+
+        if(currParams.index === undefined){
+            console.log("error");
+        }
         let result = findCostBetweenTwoPositions(
             params.currCarPosition.lattitude,
             params.currCarPosition.longitude,
@@ -681,10 +695,16 @@ function findCostBetweenTwoPositions(lat1, lng1, lat2, lng2, params){
     /**
      * to find the number of unavailable parking slots for current destination parking place.
      */
+
+    if(params.index === undefined)
+    {
+        console.log("bhula");
+    }
     let filled_parking_space = findFilledParkingSpace({
-        carIndex: params.carIndex,
+        index: params.index,
         currParking2DArray: params.currParking2DArray
     });
+
 
     let distRatio = currDist / MAX_DISTANCE;
     let spaceRatio = filled_parking_space / MAX_PARKING_SPACE;
@@ -732,11 +752,18 @@ function deg2rad(deg) {
  */
 function findFilledParkingSpace(params){
     let parking2DArray = params.currParking2DArray;
-    let carIndex = params.carIndex;
+    let index = params.index;
     let filled_parking_space = 0;
-    for(let i=0; i<parking2DArray[carIndex].length; i++){
-        if(parking2DArray[carIndex][i] !== 0)
-            filled_parking_space++;
+    if(parking2DArray[index] === undefined){
+        console.log(params);
+        console.log(" mil gaya error");
+        return 1;
     }
-    return filled_parking_space;
+    else {
+        for (let i = 0; i < parking2DArray[index].length; i++) {
+            if (parking2DArray[index][i] !== 0)
+                filled_parking_space++;
+        }
+        return filled_parking_space;
+    }
 }

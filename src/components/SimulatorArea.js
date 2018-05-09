@@ -67,7 +67,7 @@ class SimulatorArea extends Component {
                 carNumber++;
             }
 
-        }, 5000)
+        }, Constants.ARRIVAL_TIME * 1000)
     };
 
     componentDidMount(){
